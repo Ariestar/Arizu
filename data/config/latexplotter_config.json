@@ -1,0 +1,12 @@
+﻿{
+  "dpi": 300,
+  "fontsize": 18,
+  "bgcolor": "white",
+  "fgcolor": "black",
+  "max_delimiter_height": 2,
+  "autocrop_padding": 0,
+  "stitch_line_spacing": 5,
+  "manual_command_delimiter": ",",
+  "enable_auto_render": false,
+  "auto_render_delimiter": ","
+}

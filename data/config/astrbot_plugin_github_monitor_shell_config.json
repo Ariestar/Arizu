@@ -1,0 +1,7 @@
+﻿{
+    "github_token": "",
+    "repositories": [],
+    "check_interval": 60,
+    "notification_targets": [],
+    "group_notification_targets": []
+}

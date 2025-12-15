@@ -1,0 +1,169 @@
+{
+  "name": "Ljos",
+  "aliases": ["ljos", "lj"],
+  "extensions": [".lj", ".ljs", ".ljm"],
+  "case_insensitive": false,
+  "keywords": {
+    "keyword": [
+      "if",
+      "else",
+      "for",
+      "while",
+      "do",
+      "when",
+      "break",
+      "continue",
+      "return",
+      "throw",
+      "try",
+      "catch",
+      "finally",
+      "fn",
+      "type",
+      "where",
+      "go",
+      "defer",
+      "move",
+      "borrow",
+      "using",
+      "macro",
+      "async",
+      "await",
+      "yield",
+      "class",
+      "interface",
+      "enum",
+      "extends",
+      "implements",
+      "constructor",
+      "new",
+      "this",
+      "super",
+      "import",
+      "export",
+      "default",
+      "is",
+      "of",
+      "in",
+      "as",
+      "typeof",
+      "instanceof"
+    ],
+    "type": ["int", "float", "str", "bool", "bytes", "nul"],
+    "literal": ["nul", "true", "false"],
+    "built_in": [
+      "mut",
+      "const",
+      "readonly",
+      "public",
+      "private",
+      "protected",
+      "static",
+      "abstract",
+      "final",
+      "override"
+    ]
+  },
+  "contains": [
+    {
+      "className": "comment",
+      "variants": [
+        {
+          "begin": "#",
+          "end": "$"
+        },
+        {
+          "begin": "/\\*",
+          "end": "\\*/",
+          "contains": ["self"]
+        },
+        {
+          "begin": "''",
+          "end": "''",
+          "className": "comment doc"
+        }
+      ]
+    },
+    {
+      "className": "string",
+      "variants": [
+        {
+          "begin": "\"",
+          "end": "\"",
+          "illegal": "\\n",
+          "contains": [
+            {
+              "begin": "\\\\(?:[nrtv\\\\\"$]|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+              "className": "string.escape"
+            },
+            {
+              "begin": "\\$\\{",
+              "end": "\\}",
+              "className": "subst",
+              "contains": ["self"]
+            }
+          ]
+        },
+        {
+          "begin": "`",
+          "end": "`",
+          "className": "string raw"
+        }
+      ]
+    },
+    {
+      "className": "number",
+      "variants": [
+        {
+          "begin": "\\b0[bB][01]([01_]*[01])?\\b"
+        },
+        {
+          "begin": "\\b0[oO][0-7]([0-7_]*[0-7])?\\b"
+        },
+        {
+          "begin": "\\b0[xX][0-9A-Fa-f]([0-9A-Fa-f_]*[0-9A-Fa-f])?\\b"
+        },
+        {
+          "begin": "\\b[0-9]([0-9_]*[0-9])?\\.([0-9]([0-9_]*[0-9])?)?([eE][+-]?[0-9]([0-9_]*[0-9])?)?\\b"
+        },
+        {
+          "begin": "\\b[0-9]([0-9_]*[0-9])?\\b"
+        }
+      ]
+    },
+    {
+      "className": "meta decorator",
+      "begin": "@[a-zA-Z_][a-zA-Z0-9_]*",
+      "relevance": 10
+    },
+    {
+      "className": "function",
+      "beginKeywords": "fn",
+      "end": "\\{|\\)|;",
+      "excludeEnd": true,
+      "contains": [
+        {
+          "className": "title",
+          "begin": "[a-zA-Z_][a-zA-Z0-9_]*"
+        }
+      ]
+    },
+    {
+      "className": "class",
+      "beginKeywords": "class interface enum",
+      "end": "\\{",
+      "excludeEnd": true,
+      "contains": [
+        {
+          "className": "title",
+          "begin": "[A-Z][a-zA-Z0-9_]*"
+        }
+      ]
+    },
+    {
+      "className": "operator",
+      "begin": "(==|!=|<=|>=|<|>|\\+|-|\\*|/|%|=|\\+=|-=|\\*=|/=|%=|!|&|\\||\\?\\.|\\.\\.|\\?\\.\\.|\\.|=>|<>|\\?)",
+      "relevance": 0
+    }
+  ]
+}

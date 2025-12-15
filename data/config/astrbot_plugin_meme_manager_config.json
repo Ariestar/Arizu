@@ -1,0 +1,53 @@
+﻿{
+    "image_host": "stardots",
+    "image_host_config": {
+        "stardots": {
+            "key": "",
+            "secret": "",
+            "space": ""
+        },
+        "cloudflare_r2": {
+            "account_id": "",
+            "access_key_id": "",
+            "secret_access_key": "",
+            "bucket_name": "",
+            "public_url": ""
+        }
+    },
+    "webui_port": 5000,
+    "prompt": {
+        "prompt_head": "\n\n你在对话中需根据当前情境智能选用表情符号，表情需用&&包裹，例如：&&happy&&, 通用格式:&&标签&&。选择逻辑遵循以下动态规则：\n\n[智能触发机制]\n1. 关键词匹配：当对话内容包含以下类型词汇时激活表情使用\n   - 核心情绪词（开心/生气/惊讶等）→ 直接匹配对应标签\n   - 场景特征词（早安/报酬/思考等）→ 关联场景标签\n   - 语气调节词（请/建议/但是等）→ 触发软化型表情\n2. 动态优先级：\n   a) 精确匹配现有标签 > 同义词扩展 > 放弃使用\n   b) 高频使用标签优先于低频标签\n\n[表情标签库]（当前可用）\n格式：标签 - 使用场景描述\n当前可用：\n",
+        "prompt_tail_1": "\n\n=== 安全控制体系 ===\n1. 使用频率：\n   • 日常对话：最多",
+        "prompt_tail_2": "个表情\n   • 专业咨询：≤1个\n2. 强制校验规则：\n   a) 存在性检查：仅使用当前列表存在的标签\n   b) 冲突检测：当涉及医疗/法律/暴力话题时禁用所有表情\n   c) 语义一致性：表情含义需与上下文情绪方向一致\n3. 智能降级策略：\n   1) 首选：同类别表情或相近表情\n   2) 备选：放弃使用表情\n4. 自检流程：\n   提取关键词 → 匹配标签 → 语境审查 → 最终输出"
+    },
+    "max_emotions_per_message": 2,
+    "emotions_probability": 33,
+    "strict_max_emotions_per_message": true,
+    "enable_loose_emotion_matching": true,
+    "enable_alternative_markup": true,
+    "enable_repeated_emotion_detection": true,
+    "high_confidence_emotions": [
+        "angry",
+        "happy",
+        "sad",
+        "surprised",
+        "confused",
+        "color",
+        "cpu",
+        "fool",
+        "givemoney",
+        "like",
+        "see",
+        "shy",
+        "work",
+        "reply",
+        "meow",
+        "baka",
+        "morning",
+        "sleep",
+        "sigh"
+    ],
+    "content_cleanup_rule": "&&[a-zA-Z]*&&",
+    "enable_mixed_message": true,
+    "mixed_message_probability": 80
+}

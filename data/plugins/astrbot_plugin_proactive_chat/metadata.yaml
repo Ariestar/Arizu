@@ -1,0 +1,6 @@
+name: "astrbot_plugin_proactive_chat"
+display_name: "主动消息 (Proactive Chat)"
+author: "DBJD-CR & Gemini-2.5-Pro & Kimi-For-Coding"
+version: "v1.0.0-beta.7"
+desc: "一个让Bot能够发起主动消息的插件，支持私聊和群聊。拥有上下文感知、持久化会话、动态情绪、免打扰时段和健壮的TTS集成。"
+repo: "https://github.com/DBJD-CR/astrbot_plugin_proactive_chat"

@@ -1,0 +1,220 @@
+/*!
+  Theme: IntelliJ IDEA Dark (Darcula)
+  Description: Dark theme based on IntelliJ IDEA's Darcula color scheme
+  Author: JetBrains
+  Adapted for highlight.js
+*/
+
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+}
+
+code.hljs {
+  padding: 3px 5px;
+}
+
+.hljs {
+  color: #bcbec4;
+  background: #1e1f22;
+}
+
+/* Comments - gray */
+.hljs-comment,
+.hljs-quote {
+  color: #7a7e85;
+}
+
+/* Keywords - orange */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-meta .hljs-keyword {
+  color: #cf8e6d;
+}
+
+/* Strings - green */
+.hljs-string,
+.hljs-meta .hljs-string {
+  color: #6aab73;
+}
+
+/* String escape sequences */
+.hljs-char.escape_ {
+  color: #cf8e6d;
+}
+
+/* Numbers - cyan */
+.hljs-number {
+  color: #2aacb8;
+}
+
+/* Function declarations - blue */
+.hljs-title,
+.hljs-title.function_ {
+  color: #56a8f5;
+}
+
+/* Class names and types */
+.hljs-title.class_,
+.hljs-title.class_.inherited__ {
+  color: #bcbec4;
+}
+
+/* Built-in */
+.hljs-built_in {
+  color: #cf8e6d;
+}
+
+/* Variables and instance fields - pink/purple */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute {
+  color: #c77dbb;
+}
+
+/* Constants - pink italic */
+.hljs-variable.constant_ {
+  color: #c77dbb;
+  font-style: italic;
+}
+
+/* Metadata/Annotations - yellow-green */
+.hljs-meta,
+.hljs-doctag {
+  color: #b3ae60;
+}
+
+/* Type references */
+.hljs-type {
+  color: #bcbec4;
+}
+
+/* Literals */
+.hljs-literal {
+  color: #cf8e6d;
+}
+
+/* Operators and punctuation */
+.hljs-operator,
+.hljs-punctuation {
+  color: #bcbec4;
+}
+
+/* Selectors */
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: #b3ae60;
+}
+
+/* Regular expressions - cyan */
+.hljs-regexp {
+  color: #42c3d4;
+}
+
+/* HTML/XML tags - gold */
+.hljs-tag {
+  color: #d5b778;
+}
+
+.hljs-name {
+  color: #d5b778;
+}
+
+/* Attributes in HTML/XML */
+.hljs-attr {
+  color: #bcbec4;
+}
+
+/* Symbols */
+.hljs-symbol {
+  color: #c77dbb;
+}
+
+/* Code and formula */
+.hljs-code,
+.hljs-formula {
+  color: #7a7e85;
+}
+
+/* Section headers */
+.hljs-section {
+  color: #56a8f5;
+  font-weight: bold;
+}
+
+/* Bullet points */
+.hljs-bullet {
+  color: #6aab73;
+}
+
+/* Emphasis */
+.hljs-emphasis {
+  font-style: italic;
+}
+
+/* Strong */
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* Links */
+.hljs-link {
+  color: #548af7;
+  text-decoration: underline;
+}
+
+/* Addition - green background */
+.hljs-addition {
+  color: #6aab73;
+  background-color: #1a3b2d;
+}
+
+/* Deletion - red background */
+.hljs-deletion {
+  color: #fa6675;
+  background-color: #402929;
+}
+
+/* Doc comments - greenish gray italic */
+.hljs-doctag {
+  color: #67a37c;
+}
+
+/* Template tags */
+.hljs-template-tag {
+  color: #b3ae60;
+  font-style: italic;
+}
+
+/* Subst */
+.hljs-subst {
+  color: #bcbec4;
+}
+
+/* Params */
+.hljs-params {
+  color: #bcbec4;
+}
+
+/* Property */
+.hljs-property {
+  color: #c77dbb;
+}
+
+/* Variable language */
+.hljs-variable.language_ {
+  color: #cf8e6d;
+}
+
+/* Custom HTML tag names */
+.hljs-tag .hljs-name {
+  color: #d5b778;
+}
+
+/* HTML attribute values */
+.hljs-tag .hljs-attr {
+  color: #bcbec4;
+}

@@ -1,0 +1,28 @@
+﻿{
+    "LLM_providers": "",
+    "embedding_provider_id": "",
+    "milvus_lite_path": "",
+    "address": "",
+    "authentication": {
+        "token": "",
+        "user": "",
+        "password": ""
+    },
+    "summary_check_task": {
+        "SUMMARY_CHECK_INTERVAL_SECONDS": 60,
+        "SUMMARY_TIME_THRESHOLD_SECONDS": -1
+    },
+    "collection_name": "default",
+    "use_personality_filtering": true,
+    "use_session_filtering": true,
+    "num_pairs": 5,
+    "top_k": 3,
+    "contexts_memory_len": 0,
+    "memory_injection_method": "user_prompt",
+    "long_memory_prompt": "请基于以下对话内容生成一段连贯的总结性文字，要求：1. 使用单段自然语言表述，不加序号或分点；2. 聚焦提取核心要素，包括但不限于参与者身份（姓名/角色）、核心事件、关键时间节点、特殊需求、争议点及解决方案；3. 保留涉及金额/数量/规格等量化信息；4.不输出多余的解释性内容；5. 用简洁书面语整合信息，确保信息完整准确。注意：避免添加解释性内容，仅客观呈现对话要素的整合结果。6.以AI的第一人称视角记录信息",
+    "admin_panel": {
+        "api_key": "",
+        "port": 8000,
+        "host": "127.0.0.1"
+    }
+}

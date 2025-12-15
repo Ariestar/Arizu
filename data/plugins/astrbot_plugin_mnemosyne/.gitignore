@@ -1,0 +1,123 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+mnemosyne_data/
+
+# Logs
+*.log
+logs/
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+
+# Environment variables
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Documentation
+docs/_build/
+docs/.doctrees/
+
+# Project specific
+*.db-journal
+*.db-wal
+*.db-shm
+docs/admin_panel_enhancement_log.md
+docs/API.md
+docs/architecture_analysis.md
+docs/CODE_QUALITY_REPORT.md
+docs/DEPLOYMENT.md
+docs/DEVELOPMENT.md
+docs/optimization_phase1_log.md
+docs/performance_stability_diagnosis.md
+docs/PROJECT_SUMMARY.md
+docs/TEST_REPORT.md
+docs/update_log.md
+tests/__init__.py
+tests/conftest.py
+tests/test_context_manager.py
+tests/test_embedding.py
+tests/test_memory_operations.py
+tests/test_message_counter.py
+tests/integration/__init__.py
+tests/integration/test_initialization.py
+.coveragerc
+pytest.ini
+requirements-dev.txt
+requirements-test.txt
+docs/update_log.md
+docs/技术文档.md
+docs/astr_message_event.md
+docs/astrbot_message.md
+docs/context.md
+docs/course_Milvus.md
+docs/message_member.md
+docs/message_type.md
+docs/overall_architecture.md
+docs/overall_operation_process.md
+docs/platform_metadata.md
+docs/plugin.md
+docs/star_metadata.md
+docs/star.md
+astrbot*

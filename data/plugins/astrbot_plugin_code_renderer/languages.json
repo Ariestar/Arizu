@@ -1,0 +1,239 @@
+{
+  "_comment": "语言配置文件，可自行添加更多语言支持。key为语言标识，extensions为文件扩展名，aliases为语言别名",
+  "python": {
+    "extensions": [".py", ".pyw", ".pyi"],
+    "aliases": ["py", "python3", "py3"],
+    "display_name": "Python"
+  },
+  "javascript": {
+    "extensions": [".js", ".mjs", ".cjs"],
+    "aliases": ["js", "node", "nodejs"],
+    "display_name": "JavaScript"
+  },
+  "typescript": {
+    "extensions": [".ts", ".tsx"],
+    "aliases": ["ts"],
+    "display_name": "TypeScript"
+  },
+  "java": {
+    "extensions": [".java"],
+    "aliases": [],
+    "display_name": "Java"
+  },
+  "c": {
+    "extensions": [".c", ".h"],
+    "aliases": [],
+    "display_name": "C"
+  },
+  "cpp": {
+    "extensions": [".cpp", ".cc", ".cxx", ".hpp", ".hxx", ".h++"],
+    "aliases": ["c++", "cxx"],
+    "display_name": "C++"
+  },
+  "csharp": {
+    "extensions": [".cs"],
+    "aliases": ["c#", "cs"],
+    "display_name": "C#"
+  },
+  "go": {
+    "extensions": [".go"],
+    "aliases": ["golang"],
+    "display_name": "Go"
+  },
+  "rust": {
+    "extensions": [".rs"],
+    "aliases": ["rs"],
+    "display_name": "Rust"
+  },
+  "ruby": {
+    "extensions": [".rb", ".rbw"],
+    "aliases": ["rb"],
+    "display_name": "Ruby"
+  },
+  "php": {
+    "extensions": [".php", ".php3", ".php4", ".php5", ".phtml"],
+    "aliases": [],
+    "display_name": "PHP"
+  },
+  "swift": {
+    "extensions": [".swift"],
+    "aliases": [],
+    "display_name": "Swift"
+  },
+  "kotlin": {
+    "extensions": [".kt", ".kts"],
+    "aliases": ["kt"],
+    "display_name": "Kotlin"
+  },
+  "scala": {
+    "extensions": [".scala", ".sc"],
+    "aliases": [],
+    "display_name": "Scala"
+  },
+  "html": {
+    "extensions": [".html", ".htm", ".xhtml"],
+    "aliases": ["htm"],
+    "display_name": "HTML"
+  },
+  "css": {
+    "extensions": [".css"],
+    "aliases": [],
+    "display_name": "CSS"
+  },
+  "scss": {
+    "extensions": [".scss"],
+    "aliases": ["sass"],
+    "display_name": "SCSS"
+  },
+  "json": {
+    "extensions": [".json"],
+    "aliases": [],
+    "display_name": "JSON"
+  },
+  "yaml": {
+    "extensions": [".yaml", ".yml"],
+    "aliases": ["yml"],
+    "display_name": "YAML"
+  },
+  "xml": {
+    "extensions": [".xml", ".xsl", ".xslt"],
+    "aliases": [],
+    "display_name": "XML"
+  },
+  "markdown": {
+    "extensions": [".md", ".markdown"],
+    "aliases": ["md"],
+    "display_name": "Markdown"
+  },
+  "sql": {
+    "extensions": [".sql"],
+    "aliases": ["mysql", "postgresql", "sqlite"],
+    "display_name": "SQL"
+  },
+  "shell": {
+    "extensions": [".sh", ".bash", ".zsh"],
+    "aliases": ["bash", "sh", "zsh"],
+    "display_name": "Shell"
+  },
+  "powershell": {
+    "extensions": [".ps1", ".psm1", ".psd1"],
+    "aliases": ["ps", "ps1"],
+    "display_name": "PowerShell"
+  },
+  "dockerfile": {
+    "extensions": ["Dockerfile"],
+    "aliases": ["docker"],
+    "display_name": "Dockerfile"
+  },
+  "lua": {
+    "extensions": [".lua"],
+    "aliases": [],
+    "display_name": "Lua"
+  },
+  "perl": {
+    "extensions": [".pl", ".pm"],
+    "aliases": [],
+    "display_name": "Perl"
+  },
+  "r": {
+    "extensions": [".r", ".R"],
+    "aliases": ["rlang"],
+    "display_name": "R"
+  },
+  "matlab": {
+    "extensions": [".m"],
+    "aliases": [],
+    "display_name": "MATLAB"
+  },
+  "haskell": {
+    "extensions": [".hs", ".lhs"],
+    "aliases": ["hs"],
+    "display_name": "Haskell"
+  },
+  "elixir": {
+    "extensions": [".ex", ".exs"],
+    "aliases": [],
+    "display_name": "Elixir"
+  },
+  "erlang": {
+    "extensions": [".erl", ".hrl"],
+    "aliases": [],
+    "display_name": "Erlang"
+  },
+  "clojure": {
+    "extensions": [".clj", ".cljs", ".cljc", ".edn"],
+    "aliases": ["clj"],
+    "display_name": "Clojure"
+  },
+  "vue": {
+    "extensions": [".vue"],
+    "aliases": ["vuejs"],
+    "display_name": "Vue"
+  },
+  "svelte": {
+    "extensions": [".svelte"],
+    "aliases": [],
+    "display_name": "Svelte"
+  },
+  "dart": {
+    "extensions": [".dart"],
+    "aliases": [],
+    "display_name": "Dart"
+  },
+  "groovy": {
+    "extensions": [".groovy", ".gvy", ".gy", ".gsh"],
+    "aliases": [],
+    "display_name": "Groovy"
+  },
+  "toml": {
+    "extensions": [".toml"],
+    "aliases": [],
+    "display_name": "TOML"
+  },
+  "ini": {
+    "extensions": [".ini", ".cfg", ".conf"],
+    "aliases": ["config"],
+    "display_name": "INI"
+  },
+  "nginx": {
+    "extensions": [".nginx"],
+    "aliases": [],
+    "display_name": "Nginx"
+  },
+  "graphql": {
+    "extensions": [".graphql", ".gql"],
+    "aliases": ["gql"],
+    "display_name": "GraphQL"
+  },
+  "protobuf": {
+    "extensions": [".proto"],
+    "aliases": ["proto"],
+    "display_name": "Protocol Buffers"
+  },
+  "zig": {
+    "extensions": [".zig"],
+    "aliases": [],
+    "display_name": "Zig"
+  },
+  "nim": {
+    "extensions": [".nim"],
+    "aliases": [],
+    "display_name": "Nim"
+  },
+  "v": {
+    "extensions": [".v"],
+    "aliases": ["vlang"],
+    "display_name": "V"
+  },
+  "plain": {
+    "extensions": [".txt"],
+    "aliases": ["text", "plaintext"],
+    "display_name": "Plain Text"
+  },
+  "ljos": {
+    "extensions": [".lj", ".ljos"],
+    "aliases": ["lj"],
+    "display_name": "Ljos",
+    "pygments_lexer": "javascript"
+  }
+}

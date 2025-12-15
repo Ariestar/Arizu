@@ -1,0 +1,6 @@
+name: astrbot_plugin_composting_bucket
+desc: 一个用于降低AstrBot的deepseek api调用费用的插件
+help: 无命令
+version: v0.1
+author: Rail1bc
+repo: https://github.com/Rail1bc/astrbot_plugin_composting_bucket

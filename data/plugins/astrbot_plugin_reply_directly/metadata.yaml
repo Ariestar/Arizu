@@ -1,0 +1,5 @@
+name: astrbot_plugin_reply_directly
+author: qa296
+version: 1.4.6
+description: "让您的 AstrBot 在群聊中变得更加生动和智能！本插件使其可以主动的连续交互。"
+repo: https://github.com/qa296/astrbot_plugin_reply_directly

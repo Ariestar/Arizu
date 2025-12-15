@@ -1,0 +1,56 @@
+{
+  "default_theme": {
+    "type": "string",
+    "description": "默认主题",
+    "hint": "默认使用的 highlight.js 主题名称，对应 assets/highlight/styles/<名称>.min.css",
+    "default": "github-dark"
+  },
+  "font_family": {
+    "type": "string",
+    "description": "字体族名称",
+    "hint": "代码字体名称（如不可用会自动回退到其他等宽字体）",
+    "default": "JetBrains Mono, Consolas, Fira Code, Source Code Pro, monospace"
+  },
+  "font_path": {
+    "type": "string",
+    "description": "字体文件路径",
+    "hint": "可选，本地字体文件路径（如未设置则优先使用插件目录下 fonts/ttf/JetBrainsMono-Regular.ttf）",
+    "default": ""
+  },
+  "highlight_js_path": {
+    "type": "string",
+    "description": "highlight.js 路径",
+    "hint": "可选，自定义 highlight.min.js 文件路径；为空则使用插件目录下 assets/highlight/highlight.min.js",
+    "default": ""
+  },
+  "highlight_css_path": {
+    "type": "string",
+    "description": "主题 CSS 路径",
+    "hint": "可选，自定义主题 CSS 路径；为空则根据主题名称从 assets/highlight/styles/<主题>.min.css 自动加载",
+    "default": ""
+  },
+  "line_numbers_enabled": {
+    "type": "bool",
+    "description": "是否启用代码行号",
+    "hint": "插件级别的行号显示总开关（可被渲染指令/命令行覆盖）",
+    "default": true
+  },
+  "line_numbers_start_from": {
+    "type": "int",
+    "description": "行号起始值",
+    "hint": "设置行号开始计数的数值（支持局部 data-ln-start-from 覆盖）",
+    "default": 1
+  },
+  "line_numbers_single_line": {
+    "type": "bool",
+    "description": "单行代码也显示行号",
+    "hint": "为只有一行的代码块也渲染行号",
+    "default": false
+  },
+  "blacklist": {
+    "type": "list",
+    "description": "群聊黑名单",
+    "hint": "不响应这些群的消息（填写群号）",
+    "default": []
+  }
+}

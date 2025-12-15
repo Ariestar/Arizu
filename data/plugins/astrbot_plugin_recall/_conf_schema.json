@@ -1,0 +1,34 @@
+{
+    "group_whitelist": {
+        "description": "群白名单",
+        "type": "list",
+        "hint": "在此列表中的群才会启用自动撤回功能，留空表示所有群都启用",
+        "default": []
+    },
+    "recall_time": {
+        "description": "撤回时间",
+        "type": "int",
+        "hint": "自动撤回消息的间隔时间，单位为秒",
+        "default": 10
+    },
+    "max_plain_len": {
+        "description": "长文本撤回阈值",
+        "type": "int",
+        "hint": "文本消息超过此阈值时将被撤回",
+        "default": 50
+    },
+    "recall_words": {
+        "description": "关键词列表",
+        "type": "list",
+        "hint": "消息中包含有关键词时将被撤回",
+        "default": [
+            "请求失败",
+            "出现异常",
+            "色情",
+            "操",
+            "违规",
+            "党",
+            "政"
+        ]
+    }
+}

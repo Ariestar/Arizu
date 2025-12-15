@@ -1,0 +1,177 @@
+{
+    "LLM_providers":{
+        "description":"记忆总结使用的LLM服务商",
+        "type":"string",
+        "hint":"选择用于记忆总结的大语言模型提供商。留空则使用当前会话的默认提供商",
+        "_special":"select_provider",
+        "default":""
+    },
+    "embedding_provider_id":{
+        "description":"Embedding 服务提供商",
+        "type":"string",
+        "hint":"选择用于向量嵌入的 Embedding Provider。留空则使用 AstrBot 中配置的第一个 Embedding Provider",
+        "_special":"select_embedding_provider",
+        "default":""
+    },
+    "milvus_lite_path":{
+        "description":"milvus数据库的lite模式路径",
+        "type":"string",
+        "hint":"注意！！！只使用milvus_lite_path或者address其中一个即可，milvus_lite_path优先级较高",
+        "obvious_hint":true,
+        "default":"",
+        "minLength":0
+    },
+    "address":{
+        "description":"milvus数据库地址",
+        "type":"string",
+        "hint":"支持支持格式如:http://localhost:19530，https://localhost:19530，localhost:19530",
+        "obvious_hint":true,
+        "default":"",
+        "pattern":"^(https?://)?[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*:[0-9]{1,5}$",
+        "minLength":0
+    },
+    "authentication":{
+        "description":"milvus数据库的认证信息",
+        "type":"object",
+        "hint":"如果milvus开启了服务器认证，请填写对应的信息",
+        "obvious_hint":true,
+        "items":{
+            "token":{
+                "description":"milvus数据库的认证token",
+                "type":"string",
+                "hint":"token优先于账户密码",
+                "obvious_hint":true,
+                "minLength":0
+            },
+            "user":{
+                "description":"milvus数据库的认证用户名",
+                "type":"string",
+                "minLength":1
+            },
+            "password":{
+                "description":"milvus数据库的认证密码",
+                "type":"string",
+                "minLength":0
+            }
+        }
+    },
+    "summary_check_task":{
+        "description":"自动总结计时器设置",
+        "type":"object",
+        "hint":"实验性功能，当长时间不和bot说话时，会进行消息总结",
+        "obvious_hint":true,
+        "items":{
+            "SUMMARY_CHECK_INTERVAL_SECONDS":{
+                "description":"计时器间隔时间（秒）",
+                "type":"int",
+                "hint":"默认以每60秒（1分钟）进行检查一次，如果阈值设置为1小时，设置为10分钟应该也没有问题",
+                "obvious_hint":true,
+                "default":60,
+                "minimum":10,
+                "maximum":3600
+            },
+            "SUMMARY_TIME_THRESHOLD_SECONDS":{
+                "description":"计时器总结阈值（秒）",
+                "type":"int",
+                "hint":"默认是3600秒（1小时），设置为-1关闭该功能，每个人与BOT的聊天频率是不同的，按个人需求进行设置",
+                "obvious_hint":true,
+                "default":-1,
+                "minimum":-1
+            }
+        }
+    },
+    "collection_name":{
+        "description":"向量数据库的集合名称",
+        "type":"string",
+        "hint":"长期记忆存储在向量数据库的哪个集合中,请使用英文命名",
+        "obvious_hint":true,
+        "default":"default",
+        "pattern":"^[a-zA-Z][a-zA-Z0-9_]*$",
+        "minLength":1,
+        "maxLength":64
+    },
+    "use_personality_filtering":{
+        "description":"记忆查询时是否使用人格过滤",
+        "type":"bool",
+        "default":true
+    },
+    "use_session_filtering":{
+        "description":"记忆查询时是否使用会话过滤。如果禁用，所有会话将共享记忆",
+        "type":"bool",
+        "default":true
+    },
+    "num_pairs":{
+        "description":"记忆总结的对话轮数",
+        "type":"int",
+        "hint":"一问一答算作1轮对话。当对话轮数达到此阈值时会自动进行记忆总结。例如设置为5，表示每5轮对话（5次问答）后进行总结",
+        "obvious_hint":false,
+        "default":5,
+        "minimum":1,
+        "maximum":25
+    },
+    "top_k":{
+        "description":"返回的长期记忆的数量",
+        "type":"int",
+        "default":3,
+        "minimum":1,
+        "maximum":20
+    },
+    "contexts_memory_len": {
+        "description":"历史上下文中保留的长期记忆数量",
+        "type":"int",
+        "hint":"小于0表示完全保留，大于等于0表示保留最新的对应条",
+        "obvious_hint":true,
+        "default":0,
+        "minimum":-1
+    },
+    "memory_injection_method":{
+        "description":"记忆插入方式",
+        "type":"string",
+        "hint":"user_prompt 会嵌入到用户消息的最前面，system_prompt会嵌入到系统消息中，insert_system_prompt会向上下文列表中添加一条新的系统消息",
+        "options": ["user_prompt", "system_prompt", "insert_system_prompt"],
+        "default": "user_prompt"
+    },
+    "long_memory_prompt":{
+        "description":"对话总结提示词",
+        "type":"string",
+        "default":"请基于以下对话内容生成一段连贯的总结性文字，要求：1. 使用单段自然语言表述，不加序号或分点；2. 聚焦提取核心要素，包括但不限于参与者身份（姓名/角色）、核心事件、关键时间节点、特殊需求、争议点及解决方案；3. 保留涉及金额/数量/规格等量化信息；4.不输出多余的解释性内容；5. 用简洁书面语整合信息，确保信息完整准确。注意：避免添加解释性内容，仅客观呈现对话要素的整合结果。6.以AI的第一人称视角记录信息",
+        "minLength":10,
+        "maxLength":1000
+    },
+    "admin_panel":{
+        "description":"管理面板安全配置",
+        "type":"object",
+        "hint":"配置管理面板的访问控制和安全设置",
+        "obvious_hint":true,
+        "items":{
+            "api_key":{
+                "description":"管理面板 API 密钥",
+                "type":"string",
+                "hint":"用于保护管理面板 API 的访问密钥。留空则每次重启自动生成临时密钥（仅本次运行有效）。如需固定密钥，请在此配置自定义密钥",
+                "obvious_hint":true,
+                "default":"",
+                "minLength":0,
+                "maxLength":128
+            },
+            "port": {
+                "description": "管理面板服务器端口",
+                "type": "int",
+                "hint": "管理面板Web服务器运行的端口，默认为8000。请确保端口未被其他服务占用",
+                "obvious_hint": true,
+                "default": 8000,
+                "minimum": 1024,
+                "maximum": 65535
+            },
+            "host": {
+                "description": "管理面板监听地址",
+                "type": "string",
+                "hint": "管理面板Web服务器监听的IP地址。默认127.0.0.1（仅本机访问），设置为0.0.0.0可允许外部访问（需注意安全风险）",
+                "obvious_hint": true,
+                "default": "127.0.0.1",
+                "pattern": "^(127\\.0\\.0\\.1|0\\.0\\.0\\.0|localhost|((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4})$",
+                "minLength": 7,
+                "maxLength": 15
+            }
+        }
+    }
+}

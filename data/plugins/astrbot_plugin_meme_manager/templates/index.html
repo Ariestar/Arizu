@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>表情包管理中心</title>
+    <!-- 添加Font Awesome图标库 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <style>
+      /* 临时添加图标基础样式 */
+      .icon {
+        margin-right: 8px;
+        font-size: 0.9em;
+      }
+      .fa-cloud-arrow-up {
+        color: #2ecc71;
+      }
+      .fa-cloud-arrow-down {
+        color: #3498db;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><i class="fas fa-face-grin-beam icon"></i>表情包管理</h1>
+    <div class="container">
+      <div class="left-panel">
+        <div class="sync-buttons">
+          <button id="check-sync-btn">
+            <i class="fas fa-sync icon"></i>检查同步状态
+          </button>
+        </div>
+
+        <!-- 同步控制面板 -->
+        <div class="sync-panel">
+          <h3><i class="fas fa-gear icon"></i>配置同步</h3>
+          <div id="sync-status">
+            <p>
+              <i class="fas fa-spinner fa-spin icon"></i>正在检查同步状态...
+            </p>
+          </div>
+        </div>
+
+        <hr class="sync-divider" />
+
+        <div class="sync-panel">
+          <h4><i class="fas fa-cloud icon"></i>图床同步</h4>
+          <div class="sync-status">
+            <p>
+              <i class="fas fa-upload icon"></i>待上传:
+              <span id="upload-count">0</span> 个文件
+            </p>
+            <p>
+              <i class="fas fa-download icon"></i>待下载:
+              <span id="download-count">0</span> 个文件
+            </p>
+            <button id="upload-sync-btn">
+              <i class="fas fa-cloud-arrow-up icon"></i>同步到云端
+            </button>
+            <button id="download-sync-btn">
+              <i class="fas fa-cloud-arrow-down icon"></i>从云端同步
+            </button>
+          </div>
+        </div>
+
+        <!-- 目录导航 -->
+        <div id="sidebar">
+          <h2><i class="fas fa-folder-open icon"></i>目录</h2>
+          <ul id="sidebar-list"></ul>
+        </div>
+      </div>
+
+      <div id="content">
+        <div id="emoji-categories"></div>
+        <button id="add-category-btn">
+          <i class="fas fa-plus-circle icon"></i>添加分类
+        </button>
+        <div id="add-category-form" style="display: none">
+          <input
+            type="text"
+            id="new-category-name"
+            placeholder="输入类别名称"
+            class="form-control"
+          />
+          <input
+            type="text"
+            id="new-category-description"
+            placeholder="输入类别描述"
+            class="form-control mt-2"
+          />
+          <button id="save-category-btn" class="btn btn-primary mt-2">
+            <i class="fas fa-save icon"></i>保存分类
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

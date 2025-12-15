@@ -1,0 +1,9 @@
+﻿{
+  "default_api": "netease",
+  "nodejs_base_url": "http://netease_cloud_music_api:3000",
+  "select_mode": "text",
+  "send_mode": "card",
+  "enable_comments": true,
+  "enable_lyrics": false,
+  "timeout": 30
+}

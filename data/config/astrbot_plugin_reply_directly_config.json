@@ -1,0 +1,7 @@
+﻿{
+  "enable_plugin": true,
+  "enable_immersive_chat": true,
+  "immersive_chat_timeout": 100,
+  "enable_proactive_reply": true,
+  "proactive_reply_delay": 8
+}

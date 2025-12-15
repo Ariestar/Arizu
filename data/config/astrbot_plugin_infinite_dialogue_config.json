@@ -1,0 +1,6 @@
+﻿{
+    "max_conversation_length": 40,
+    "summary_provider_id": "",
+    "max_retries": 3,
+    "whitelist": []
+}

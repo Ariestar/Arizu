@@ -1,0 +1,93 @@
+{  "auto_send": {
+    "description": "是否自动随聊追加表情包",
+    "type": "bool",
+    "default": true
+  },
+  "vision_provider_id": {
+    "description": "视觉模型提供商ID（用于图片分类）",
+    "type": "string",
+    "hint": "选择支持图片输入的提供商 ID（如 Gemini,豆包,qwen vl 等）",
+    "_special": "select_provider"
+  },
+
+
+  "emoji_chance": {
+    "description": "触发表情动作的基础概率",
+    "type": "float",
+    "default": 0.4
+  },
+  "max_reg_num": {
+    "description": "允许注册的最大表情数量",
+    "type": "int",
+    "default": 100
+  },
+  "do_replace": {
+    "description": "达到上限时是否替换旧表情",
+    "type": "bool",
+    "default": true
+  },
+  "raw_cleanup_interval": {
+    "description": "raw目录清理任务的执行周期（分钟）",
+    "type": "int",
+    "default": 30
+  },
+  "capacity_control_interval": {
+    "description": "容量控制任务的执行周期（分钟）",
+    "type": "int",
+    "default": 60
+  },
+  "enable_raw_cleanup": {
+    "description": "是否启用raw目录自动清理",
+    "type": "bool",
+    "default": true
+  },
+  "enable_capacity_control": {
+    "description": "是否启用容量自动控制",
+    "type": "bool",
+    "default": true
+  },
+  "steal_emoji": {
+    "description": "是否开启表情包偷取和清理功能（关闭后将停止偷取新图片并暂停所有清理操作）",
+    "type": "bool",
+    "default": true
+  },
+
+  "content_filtration": {
+    "description": "是否开启内容审核",
+    "type": "bool",
+    "default": false
+  },
+
+  "raw_retention_minutes": {
+    "description": "raw目录中图片的保留期限（分钟）",
+    "type": "int",
+    "default": 60
+  },
+
+  "image_processing_mode": {
+    "description": "图片处理模式：always(总是处理), probability(概率处理), interval(间隔处理), cooldown(冷却时间)",
+    "type": "string",
+    "default": "probability",
+    "enum": ["always", "probability", "interval", "cooldown"]
+  },
+
+  "image_processing_probability": {
+    "description": "概率模式下处理图片的概率（0.0-1.0）",
+    "type": "float",
+    "default": 0.3
+  },
+
+  "image_processing_interval": {
+    "description": "间隔模式下处理图片的间隔秒数",
+    "type": "int",
+    "default": 60
+  },
+
+  "image_processing_cooldown": {
+    "description": "冷却模式下两次处理之间的最小间隔秒数",
+    "type": "int",
+    "default": 30
+  }
+
+}
+

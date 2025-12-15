@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SELF LEARNING 管理后台</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div class="main-content" id="main-app-content">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>自主学习 SELF LEARNING</h2>
+                <div class="status-indicator">
+                    <span class="status-dot active"></span>
+                    <span class="status-text">运行中</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-page="dashboard">
+                    <i class="material-icons">dashboard</i>
+                    <span>可视化大屏</span>
+                </li>
+                <li class="menu-item" data-page="config">
+                    <i class="material-icons">settings</i>
+                    <span>插件配置</span>
+                </li>
+                <li class="menu-item" data-page="persona-review">
+                    <i class="material-icons">rate_review</i>
+                    <span>人格审查</span>
+                </li>
+                <li class="menu-item" data-page="persona-management">
+                    <i class="material-icons">person</i>
+                    <span>人格管理</span>
+                </li>
+                <li class="menu-item" data-page="metrics">
+                    <i class="material-icons">analytics</i>
+                    <span>详细监控</span>
+                </li>
+                <li class="menu-item" data-page="learning-status">
+                    <i class="material-icons">psychology</i>
+                    <span>学习状态</span>
+                </li>
+                <li class="menu-item" data-page="style-learning">
+                    <i class="material-icons">chat</i>
+                    <span>对话风格学习</span>
+                </li>
+                <li class="menu-item" data-page="social-relations">
+                    <i class="material-icons">group</i>
+                    <span>社交关系分析</span>
+                </li>
+                <li class="menu-item" data-page="jargon-learning">
+                    <i class="material-icons">translate</i>
+                    <span>黑话学习</span>
+                </li>
+            </ul>
+            <div class="sidebar-actions">
+                <button class="relearn-btn" id="relearnBtn" title="重新学习所有历史消息">
+                    <i class="material-icons">refresh</i>
+                    <span>重新学习</span>
+                </button>
+            </div>
+        </div>
+        <div class="main-content-area">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 id="page-title">可视化大屏</h1>
+                    <div class="breadcrumb">
+                        <span>自学习插件</span>
+                        <i class="material-icons">chevron_right</i>
+                        <span id="current-page">可视化大屏</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="refresh-indicator">
+                        <i class="material-icons refresh-icon">refresh</i>
+                        <span id="last-update">刚刚更新</span>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <i class="material-icons">account_circle</i>
+                            <span>管理员</span>
+                        </div>
+                        <button class="logout-btn" id="logoutBtn">
+                            <i class="material-icons">logout</i>
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <div class="content-area">
+                <!-- 可视化大屏页面 -->
+                <div id="dashboard-page" class="page active">
+                    <!-- 概览统计卡片 -->
+                    <div class="overview-stats">
+                        <div class="stat-card total-messages">
+                            <div class="stat-icon">
+                                <i class="material-icons">chat</i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="total-messages">0</div>
+                                <div class="stat-label">总消息数</div>
+                                <small class="stat-description">与机器人交互的所有消息数量</small>
+                                <div class="stat-trend positive">
+                                    <i class="material-icons">trending_up</i>
+                                    <span id="messages-trend">+12%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card filtered-messages">
+                            <div class="stat-icon">
+                                <i class="material-icons">filter_list</i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="filtered-messages">0</div>
+                                <div class="stat-label">筛选消息数</div>
+                                <small class="stat-description">通过质量筛选的有效学习消息数量</small>
+                                <div class="stat-trend positive">
+                                    <i class="material-icons">trending_up</i>
+                                    <span id="filtered-trend">+8%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card llm-calls">
+                            <div class="stat-icon">
+                                <i class="material-icons">psychology</i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="total-llm-calls">0</div>
+                                <div class="stat-label">LLM调用次数</div>
+                                <div class="stat-trend positive">
+                                    <i class="material-icons">trending_up</i>
+                                    <span id="llm-trend">+15%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card learning-sessions">
+                            <div class="stat-icon">
+                                <i class="material-icons">school</i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="learning-sessions">0</div>
+                                <div class="stat-label">学习会话数</div>
+                                <div class="stat-trend positive">
+                                    <i class="material-icons">trending_up</i>
+                                    <span id="sessions-trend">+5%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主要图表区域 -->
+                    <div class="charts-grid">
+                        <!-- LLM调用分布 -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>LLM模型调用分布</h3>
+                                <div class="chart-controls">
+                                    <select id="llm-time-range">
+                                        <option value="1h">近1小时</option>
+                                        <option value="24h" selected>近24小时</option>
+                                        <option value="7d">近7天</option>
+                                        <option value="30d">近30天</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-content">
+                                <div id="llm-usage-pie" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 消息处理趋势 -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>消息处理趋势</h3>
+                                <div class="chart-controls">
+                                    <select id="message-time-range">
+                                        <option value="1h">近1小时</option>
+                                        <option value="24h" selected>近24小时</option>
+                                        <option value="7d">近7天</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-content">
+                                <div id="message-trend-line" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- LLM响应时间分析 -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>LLM响应时间分析</h3>
+                                <div class="chart-legend">
+                                    <span class="legend-item">
+                                        <span class="legend-color gpt4"></span>
+                                        GPT-4o
+                                    </span>
+                                    <span class="legend-item">
+                                        <span class="legend-color gpt4-mini"></span>
+                                        GPT-4o-mini
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="chart-content">
+                                <div id="response-time-bar" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 学习进度概览 -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>学习进度概览</h3>
+                                <div class="progress-summary">
+                                    <span id="learning-efficiency">效率: 85%</span>
+                                </div>
+                            </div>
+                            <div class="chart-content">
+                                <div id="learning-progress-gauge" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 系统资源使用情况 -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>系统状态监控</h3>
+                                <div class="status-indicators">
+                                    <span class="status-item">
+                                        <span class="status-dot active"></span>
+                                        消息抓取
+                                    </span>
+                                    <span class="status-item">
+                                        <span class="status-dot active"></span>
+                                        自动学习
+                                    </span>
+                                    <span class="status-item">
+                                        <span class="status-dot inactive"></span>
+                                        实时学习
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="chart-content">
+                                <div id="system-status-radar" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 对话风格学习可视化 -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>对话风格学习进度</h3>
+                                <div class="chart-controls">
+                                    <select id="style-dashboard-range">
+                                        <option value="7d">近7天</option>
+                                        <option value="30d" selected>近30天</option>
+                                        <option value="90d">近90天</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-content">
+                                <div id="style-learning-dashboard" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 用户活跃度热力图 -->
+                        <div class="chart-container wide">
+                            <div class="chart-header">
+                                <h3>用户活跃度热力图</h3>
+                                <div class="chart-controls">
+                                    <button class="time-btn active" data-period="today">今天</button>
+                                    <button class="time-btn" data-period="week">本周</button>
+                                    <button class="time-btn" data-period="month">本月</button>
+                                </div>
+                            </div>
+                            <div class="chart-content">
+                                <div id="activity-heatmap" class="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 插件配置页面 -->
+                <div id="config-page" class="page">
+                    <div class="config-section">
+                        <h2>插件配置</h2>
+                        
+                        <!-- 基础开关设置 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">toggle_on</i> 基础开关</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>核心功能</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableMessageCapture">
+                                            <span class="switch-slider"></span>
+                                            启用消息抓取
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableAutoLearning">
+                                            <span class="switch-slider"></span>
+                                            启用自动学习
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableRealtimeLearning">
+                                            <span class="switch-slider"></span>
+                                            启用实时学习
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableRealtimeLLMFilter">
+                                            <span class="switch-slider"></span>
+                                            启用实时LLM筛选
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="config-card">
+                                    <h4>Web界面</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableWebInterface">
+                                            <span class="switch-slider"></span>
+                                            启用Web界面
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="webInterfacePort">Web界面端口</label>
+                                        <input type="number" id="webInterfacePort" min="1" max="65535" value="7833">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- MaiBot增强功能 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">psychology</i> MaiBot增强功能</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>智能增强</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableMaibotFeatures">
+                                            <span class="switch-slider"></span>
+                                            启用MaiBot增强功能
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableExpressionPatterns">
+                                            <span class="switch-slider"></span>
+                                            启用表达模式学习
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="config-card">
+                                    <h4>记忆系统</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableMemoryGraph">
+                                            <span class="switch-slider"></span>
+                                            启用记忆图系统
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableKnowledgeGraph">
+                                            <span class="switch-slider"></span>
+                                            启用知识图谱
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableTimeDecay">
+                                            <span class="switch-slider"></span>
+                                            启用时间衰减机制
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- QQ号设置 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">people</i> 目标设置</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>QQ号配置</h4>
+                                    <div class="form-group">
+                                        <label for="targetQQList">目标QQ列表</label>
+                                        <textarea id="targetQQList" placeholder="输入QQ号，用逗号分隔。留空则学习所有用户消息"></textarea>
+                                        <small class="form-hint">💡 为空时将学习群内所有用户的消息，有助于学习更丰富的表达风格</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="targetBlacklist">学习黑名单</label>
+                                        <textarea id="targetBlacklist" placeholder="输入要排除的QQ号，用逗号分隔"></textarea>
+                                        <small class="form-hint">💡 这些用户的消息将被忽略，不会用于学习</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="currentPersonaName">当前人格名称</label>
+                                        <input type="text" id="currentPersonaName" value="default">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- LLM模型配置 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">smart_toy</i> LLM模型配置</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>模型提供商</h4>
+                                    <div class="form-group">
+                                        <label for="filterProviderId">筛选模型提供商ID</label>
+                                        <input type="text" id="filterProviderId" placeholder="筛选模型使用的提供商ID">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="refineProviderId">提炼模型提供商ID</label>
+                                        <input type="text" id="refineProviderId" placeholder="提炼模型使用的提供商ID">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reinforceProviderId">强化模型提供商ID</label>
+                                        <input type="text" id="reinforceProviderId" placeholder="强化模型使用的提供商ID">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 学习参数 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">school</i> 学习参数</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>学习设置</h4>
+                                    <div class="form-group">
+                                        <label for="learningInterval">学习间隔(小时)</label>
+                                        <input type="range" id="learningInterval" min="1" max="168" value="6">
+                                        <span class="range-value">6 小时</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minMessagesForLearning">最少消息数量才开始学习</label>
+                                        <input type="range" id="minMessagesForLearning" min="10" max="500" value="50">
+                                        <span class="range-value">50 条</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maxMessagesPerBatch">每批处理的最大消息数量</label>
+                                        <input type="range" id="maxMessagesPerBatch" min="50" max="1000" value="200">
+                                        <span class="range-value">200 条</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 筛选参数 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">filter_list</i> 筛选参数</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>消息筛选</h4>
+                                    <div class="form-group">
+                                        <label for="messageMinLength">消息最小长度</label>
+                                        <input type="range" id="messageMinLength" min="1" max="50" value="5">
+                                        <span class="range-value">5 字符</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="messageMaxLength">消息最大长度</label>
+                                        <input type="range" id="messageMaxLength" min="100" max="2000" value="500">
+                                        <span class="range-value">500 字符</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confidenceThreshold">筛选置信度阈值</label>
+                                        <input type="range" id="confidenceThreshold" min="0.1" max="1.0" step="0.1" value="0.7">
+                                        <span class="range-value">0.7</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="relevanceThreshold">相关性阈值</label>
+                                        <input type="range" id="relevanceThreshold" min="0.1" max="1.0" step="0.1" value="0.6">
+                                        <span class="range-value">0.6</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 风格分析 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">style</i> 风格分析</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>分析设置</h4>
+                                    <div class="form-group">
+                                        <label for="styleAnalysisBatchSize">风格分析批次大小</label>
+                                        <input type="range" id="styleAnalysisBatchSize" min="50" max="500" value="100">
+                                        <span class="range-value">100 条</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="styleUpdateThreshold">风格更新阈值</label>
+                                        <input type="range" id="styleUpdateThreshold" min="0.1" max="1.0" step="0.1" value="0.6">
+                                        <span class="range-value">0.6</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 机器学习设置 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">auto_awesome</i> 机器学习设置</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>ML配置</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableMLAnalysis">
+                                            <span class="switch-slider"></span>
+                                            启用ML分析
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maxMLSampleSize">ML样本最大数量</label>
+                                        <input type="range" id="maxMLSampleSize" min="50" max="500" value="100">
+                                        <span class="range-value">100 条</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mlCacheTimeoutHours">ML缓存超时(小时)</label>
+                                        <input type="range" id="mlCacheTimeoutHours" min="1" max="24" value="1">
+                                        <span class="range-value">1 小时</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 人格备份设置 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">backup</i> 人格备份设置</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>备份配置</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="autoBackupEnabled">
+                                            <span class="switch-slider"></span>
+                                            启用自动备份
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="backupIntervalHours">备份间隔(小时)</label>
+                                        <input type="range" id="backupIntervalHours" min="1" max="168" value="24">
+                                        <span class="range-value">24 小时</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maxBackupsPerGroup">每群最大备份数</label>
+                                        <input type="range" id="maxBackupsPerGroup" min="5" max="50" value="10">
+                                        <span class="range-value">10 个</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 高级设置 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">settings_applications</i> 高级设置</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>调试与存储</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="debugMode">
+                                            <span class="switch-slider"></span>
+                                            调试模式
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="saveRawMessages">
+                                            <span class="switch-slider"></span>
+                                            保存原始消息
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="autoBackupIntervalDays">自动备份间隔(天)</label>
+                                        <input type="range" id="autoBackupIntervalDays" min="1" max="30" value="7">
+                                        <span class="range-value">7 天</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- PersonaUpdater配置 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">person</i> 人格更新配置</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>人格管理</h4>
+                                    <div class="form-group">
+                                        <label for="personaMergeStrategy">人格合并策略</label>
+                                        <select id="personaMergeStrategy">
+                                            <option value="smart">智能合并</option>
+                                            <option value="replace">替换</option>
+                                            <option value="append">追加</option>
+                                            <option value="prepend">前置</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maxMoodImitationDialogs">最大对话风格模仿数量</label>
+                                        <input type="range" id="maxMoodImitationDialogs" min="10" max="50" value="20">
+                                        <span class="range-value">20 个</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enablePersonaEvolution">
+                                            <span class="switch-slider"></span>
+                                            启用人格演化跟踪
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="personaCompatibilityThreshold">人格兼容性阈值</label>
+                                        <input type="range" id="personaCompatibilityThreshold" min="0.1" max="1.0" step="0.1" value="0.6">
+                                        <span class="range-value">0.6</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="usePersonaManagerUpdates" checked>
+                                            <span class="switch-slider"></span>
+                                            使用PersonaManager更新
+                                        </label>
+                                        <small class="form-hint">💡 启用后将使用框架原生PersonaManager方法更新人格 默认打开</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="config-card">
+                                    <h4>更新方式</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="autoApplyPersonaUpdates">
+                                            <span class="switch-slider"></span>
+                                            自动应用人格更新
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="personaUpdateBackupEnabled">
+                                            <span class="switch-slider"></span>
+                                            启用更新前备份
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 好感度系统 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">favorite</i> 好感度系统</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>好感度配置</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableAffectionSystem">
+                                            <span class="switch-slider"></span>
+                                            启用好感度系统
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maxTotalAffection">bot总好感度满分值</label>
+                                        <input type="range" id="maxTotalAffection" min="100" max="500" value="250">
+                                        <span class="range-value">250</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maxUserAffection">单个用户最大好感度</label>
+                                        <input type="range" id="maxUserAffection" min="50" max="200" value="100">
+                                        <span class="range-value">100</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="affectionDecayRate">好感度衰减比例</label>
+                                        <input type="range" id="affectionDecayRate" min="0.8" max="1.0" step="0.01" value="0.95">
+                                        <span class="range-value">0.95</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="dailyMoodChange">
+                                            <span class="switch-slider"></span>
+                                            启用每日情绪变化
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="moodAffectAffection">
+                                            <span class="switch-slider"></span>
+                                            情绪影响好感度变化
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 情绪系统 -->
+                        <div class="config-category">
+                            <h3><i class="material-icons">sentiment_satisfied</i> 情绪系统</h3>
+                            <div class="config-grid">
+                                <div class="config-card">
+                                    <h4>情绪配置</h4>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableDailyMood">
+                                            <span class="switch-slider"></span>
+                                            启用每日情绪
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="switch-label">
+                                            <input type="checkbox" id="enableStartupRandomMood">
+                                            <span class="switch-slider"></span>
+                                            启用启动时随机情绪初始化
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="moodChangeHour">情绪更新时间(24小时制)</label>
+                                        <input type="range" id="moodChangeHour" min="0" max="23" value="6">
+                                        <span class="range-value">6:00</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="moodPersistenceHours">情绪持续时间(小时)</label>
+                                        <input type="range" id="moodPersistenceHours" min="1" max="72" value="24">
+                                        <span class="range-value">24 小时</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-actions">
+                            <button class="btn btn-primary" id="saveConfig">
+                                <i class="material-icons">save</i>
+                                保存配置
+                            </button>
+                            <button class="btn btn-secondary" id="resetConfig">
+                                <i class="material-icons">refresh</i>
+                                重置配置
+                            </button>
+                            <button class="btn btn-info" id="exportConfig">
+                                <i class="material-icons">download</i>
+                                导出配置
+                            </button>
+                            <button class="btn btn-warning" id="importConfig">
+                                <i class="material-icons">upload</i>
+                                导入配置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 人格审查页面 -->
+                <div id="persona-review-page" class="page">
+                    <div class="review-section">
+                        <div class="section-header">
+                            <h2>人格更新审查</h2>
+                            <div class="review-stats">
+                                <span class="stat">待审查: <strong id="pending-reviews">0</strong></span>
+                                <span class="stat">已批准: <strong id="approved-reviews">0</strong></span>
+                                <span class="stat">已拒绝: <strong id="rejected-reviews">0</strong></span>
+                            </div>
+                        </div>
+                        
+                        <!-- 审查选项卡 -->
+                        <div class="review-tabs">
+                            <button class="tab-btn active" id="pending-tab" data-tab="pending">
+                                <i class="material-icons">pending_actions</i>
+                                待审查
+                            </button>
+                            <button class="tab-btn" id="reviewed-tab" data-tab="reviewed">
+                                <i class="material-icons">history</i>
+                                审查历史
+                            </button>
+                        </div>
+                        
+                        <!-- 待审查列表 -->
+                        <div class="tab-content active" id="pending-content">
+                            <!-- 筛选控件 -->
+                            <div class="filter-panel" id="pending-filter-panel">
+                                <div class="filter-row">
+                                    <div class="filter-group">
+                                        <label>类型:</label>
+                                        <select id="filter-type" onchange="applyPersonaFilters()">
+                                            <option value="">全部类型</option>
+                                            <option value="style_learning">风格学习</option>
+                                            <option value="persona_learning">人格学习</option>
+                                            <option value="traditional">常规更新</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>群组:</label>
+                                        <select id="filter-group" onchange="applyPersonaFilters()">
+                                            <option value="">全部群组</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>置信度:</label>
+                                        <select id="filter-confidence" onchange="applyPersonaFilters()">
+                                            <option value="">全部</option>
+                                            <option value="high">高 (≥80%)</option>
+                                            <option value="medium">中 (50%-80%)</option>
+                                            <option value="low">低 (<50%)</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>时间:</label>
+                                        <select id="filter-time" onchange="applyPersonaFilters()">
+                                            <option value="">全部时间</option>
+                                            <option value="today">今天</option>
+                                            <option value="week">最近7天</option>
+                                            <option value="month">最近30天</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-secondary btn-small" onclick="resetPersonaFilters()">
+                                        <i class="material-icons">refresh</i>
+                                        重置
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- 批量操作控制栏 -->
+                            <div class="batch-operations-header">
+                                <div class="select-all-container">
+                                    <input type="checkbox" id="select-all-pending" onchange="toggleSelectAllPending()">
+                                    <label for="select-all-pending">全选</label>
+                                    <span class="selected-count">已选中 <span id="pending-selected-count">0</span> 项</span>
+                                </div>
+                                <div class="batch-operations" id="pending-batch-operations" style="display: none;">
+                                    <button class="btn btn-success batch-approve-btn" onclick="batchReviewPersonaUpdates(getSelectedReviewIds(), 'approve')">
+                                        <i class="material-icons">check</i>
+                                        批量批准
+                                    </button>
+                                    <button class="btn btn-danger batch-reject-btn" onclick="batchReviewPersonaUpdates(getSelectedReviewIds(), 'reject')">
+                                        <i class="material-icons">close</i>
+                                        批量拒绝
+                                    </button>
+                                    <button class="btn btn-secondary batch-delete-btn" onclick="batchDeletePersonaUpdates(getSelectedReviewIds())">
+                                        <i class="material-icons">delete</i>
+                                        批量删除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="review-list" id="review-list">
+                                <!-- 待审查的人格更新列表将在这里动态加载 -->
+                            </div>
+                            <!-- 分页控件 -->
+                            <div class="pagination-controls" id="pending-pagination">
+                                <div class="pagination-info">
+                                    显示 <span id="pending-showing-start">0</span>-<span id="pending-showing-end">0</span>
+                                    共 <span id="pending-total-count">0</span> 条
+                                </div>
+                                <div class="pagination-buttons">
+                                    <button class="btn btn-small" id="pending-prev-btn" onclick="changePendingPage(-1)" disabled>
+                                        <i class="material-icons">chevron_left</i>
+                                    </button>
+                                    <span class="page-indicator">
+                                        第 <span id="pending-current-page">1</span> / <span id="pending-total-pages">1</span> 页
+                                    </span>
+                                    <button class="btn btn-small" id="pending-next-btn" onclick="changePendingPage(1)" disabled>
+                                        <i class="material-icons">chevron_right</i>
+                                    </button>
+                                    <select id="pending-page-size" onchange="changePendingPageSize()" class="page-size-select">
+                                        <option value="10">10条/页</option>
+                                        <option value="20" selected>20条/页</option>
+                                        <option value="50">50条/页</option>
+                                        <option value="100">100条/页</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 已审查列表 -->
+                        <div class="tab-content" id="reviewed-content">
+                            <div class="reviewed-controls">
+                                <div class="filter-controls">
+                                    <button class="filter-btn active" data-filter="all">全部</button>
+                                    <button class="filter-btn" data-filter="approved">已批准</button>
+                                    <button class="filter-btn" data-filter="rejected">已拒绝</button>
+                                </div>
+                                <!-- 批量操作控制栏 -->
+                                <div class="batch-operations-header">
+                                    <div class="select-all-container">
+                                        <input type="checkbox" id="select-all-reviewed" onchange="toggleSelectAllReviewed()">
+                                        <label for="select-all-reviewed">全选</label>
+                                        <span class="selected-count">已选中 <span id="reviewed-selected-count">0</span> 项</span>
+                                    </div>
+                                    <div class="batch-operations" id="reviewed-batch-operations" style="display: none;">
+                                        <button class="btn btn-secondary batch-delete-reviewed-btn" onclick="batchDeletePersonaUpdates(getSelectedReviewedIds())">
+                                            <i class="material-icons">delete</i>
+                                            批量删除
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-list" id="reviewed-list">
+                                <!-- 已审查的人格更新列表将在这里动态加载 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 详细监控页面 -->
+                <div id="metrics-page" class="page">
+                    <div class="metrics-section">
+                        <h2>详细性能监控</h2>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <h3>API响应时间</h3>
+                                <div id="api-metrics-chart" class="chart"></div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>数据库查询性能</h3>
+                                <div id="db-metrics-chart" class="chart"></div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>内存使用情况</h3>
+                                <div id="memory-metrics-chart" class="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 学习状态页面 -->
+                <div id="learning-status-page" class="page">
+                    <div class="learning-section">
+                        <h2>学习状态详情</h2>
+                        <div class="learning-overview">
+                            <div class="learning-card">
+                                <h3>当前会话</h3>
+                                <div class="session-info">
+                                    <p>会话ID: <span id="current-session-id">--</span></p>
+                                    <p>开始时间: <span id="session-start-time">--</span></p>
+                                    <p>处理消息: <span id="session-messages">0</span></p>
+                                    <p>学习状态: <span id="session-status" class="status-badge">停止</span></p>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <h3>学习历史</h3>
+                                <div id="learning-history-chart" class="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 人格管理页面 -->
+                <div id="persona-management-page" class="page">
+                    <div class="persona-management-section">
+                        <div class="section-header">
+                            <h2>人格管理</h2>
+                            <div class="management-controls">
+                                <button class="btn btn-primary" id="createPersonaBtn">
+                                    <i class="material-icons">add</i>
+                                    创建人格
+                                </button>
+                                <button class="btn btn-info" id="importPersonaBtn">
+                                    <i class="material-icons">upload</i>
+                                    导入人格
+                                </button>
+                                <button class="btn btn-success" id="refreshPersonasBtn">
+                                    <i class="material-icons">refresh</i>
+                                    刷新列表
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 人格列表 -->
+                        <div class="personas-grid" id="personas-grid">
+                            <!-- 人格卡片将在这里动态加载 -->
+                            <div class="persona-card loading-placeholder">
+                                <div class="loading-spinner"></div>
+                                <p>正在加载人格列表...</p>
+                            </div>
+                        </div>
+
+                        <!-- 默认人格显示 -->
+                        <div class="default-persona-section">
+                            <h3><i class="material-icons">star</i> 默认人格</h3>
+                            <div class="default-persona-card" id="default-persona-card">
+                                <!-- 默认人格内容将在这里显示 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 对话风格学习页面 -->
+                <div id="style-learning-page" class="page">
+                    <div class="style-learning-section">
+                        <h2>对话风格学习成果</h2>
+                        
+                        <!-- 学习统计概览 -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">forum</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="style-types-count">0</h3>
+                                    <p>学习风格类型</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">trending_up</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="avg-confidence">0%</h3>
+                                    <p>平均置信度</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">data_usage</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="total-samples">0</h3>
+                                    <p>原始消息总数</p>
+                                    <small class="stat-description">学习使用的未筛选消息数量</small>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">update</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="latest-update">--</h3>
+                                    <p>最新更新</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 学习进度和成果展示 -->
+                        <div class="charts-grid">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>风格学习进度</h3>
+                                    <div class="chart-controls">
+                                        <select id="style-time-range">
+                                            <option value="7">近7天</option>
+                                            <option value="30">近30天</option>
+                                            <option value="90">近90天</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="style-progress-chart" class="chart"></div>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>情感表达模式</h3>
+                                </div>
+                                <div id="emotion-patterns-chart" class="chart"></div>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>语言风格分布</h3>
+                                </div>
+                                <div id="language-style-chart" class="chart"></div>
+                            </div>
+
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>主题偏好分析</h3>
+                                </div>
+                                <div id="topic-preferences-chart" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 学习内容文本汇总 -->
+                        <div class="learning-content-section">
+                            <h3><i class="material-icons">library_books</i> 学习内容文本汇总</h3>
+                            <div class="content-controls">
+                                <button class="btn btn-secondary" onclick="loadAllLearningContent()">
+                                    <i class="material-icons">refresh</i>
+                                    刷新内容
+                                </button>
+                                <button class="btn btn-info" onclick="exportLearningContent()">
+                                    <i class="material-icons">download</i>
+                                    导出文本
+                                </button>
+                                <div class="search-box">
+                                    <input type="text" id="contentSearchInput" placeholder="搜索学习内容..." onkeyup="filterLearningContent()">
+                                    <i class="material-icons">search</i>
+                                </div>
+                            </div>
+                            <div class="learning-content-container">
+                                <div class="content-category">
+                                    <h4><i class="material-icons">chat</i> 对话示例文本</h4>
+                                    <div class="content-text-area" id="dialogue-content">
+                                        <div class="loading-message">正在加载对话内容...</div>
+                                    </div>
+                                </div>
+                                <div class="content-category">
+                                    <h4><i class="material-icons">psychology</i> 学习分析结果</h4>
+                                    <div class="content-text-area" id="analysis-content">
+                                        <div class="loading-message">正在加载分析内容...</div>
+                                    </div>
+                                </div>
+                                <div class="content-category">
+                                    <h4><i class="material-icons">description</i> 提炼的风格特征</h4>
+                                    <div class="content-text-area" id="features-content">
+                                        <div class="loading-message">正在加载特征内容...</div>
+                                    </div>
+                                </div>
+                                <div class="content-category">
+                                    <h4><i class="material-icons">timeline</i> 学习历程记录</h4>
+                                    <div class="content-text-area" id="history-content">
+                                        <div class="loading-message">正在加载历程记录...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 学习模式详情 -->
+                        <div class="learning-patterns-section">
+                            <h3>学习到的对话模式</h3>
+                            <div class="patterns-container">
+                                <div class="pattern-category">
+                                    <h4><i class="material-icons">sentiment_satisfied</i> 情感表达</h4>
+                                    <div id="emotion-patterns-list" class="patterns-list">
+                                        <!-- 动态加载情感表达模式 -->
+                                    </div>
+                                </div>
+                                <div class="pattern-category">
+                                    <h4><i class="material-icons">text_format</i> 语言风格</h4>
+                                    <div id="language-patterns-list" class="patterns-list">
+                                        <!-- 动态加载语言风格模式 -->
+                                    </div>
+                                </div>
+                                <div class="pattern-category">
+                                    <h4><i class="material-icons">topic</i> 主题偏好</h4>
+                                    <div id="topic-patterns-list" class="patterns-list">
+                                        <!-- 动态加载主题偏好模式 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 社交关系分析页面 -->
+                <div id="social-relations-page" class="page">
+                    <div class="social-relations-section">
+                        <h2>社交关系分析</h2>
+
+                        <!-- 群组列表 -->
+                        <div class="group-list-section">
+                            <div class="section-header">
+                                <h3><i class="material-icons">groups</i> 群组列表</h3>
+                                <button class="btn btn-secondary" id="refreshGroupsBtn" onclick="loadGroupList()">
+                                    <i class="material-icons">refresh</i>
+                                    刷新群组
+                                </button>
+                            </div>
+                            <div id="group-list-container" class="group-list">
+                                <div class="loading-message">正在加载群组列表...</div>
+                            </div>
+                        </div>
+
+                        <!-- 关系可视化 -->
+                        <div class="relationship-viz-section" id="relationship-detail" style="display:none;">
+                            <div class="section-header">
+                                <h3><i class="material-icons">hub</i>
+                                    <span id="current-group-name">群组成员关系图谱</span>
+                                </h3>
+                                <div>
+                                    <button class="btn btn-primary" onclick="analyzeGroupRelations(event)" style="margin-right: 10px;">
+                                        <i class="material-icons">psychology</i>
+                                        智能分析关系
+                                    </button>
+                                    <button class="btn btn-danger" onclick="clearGroupRelations(event)" style="margin-right: 10px;">
+                                        <i class="material-icons">delete_forever</i>
+                                        清空关系数据
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="backToGroupList()">
+                                        <i class="material-icons">arrow_back</i>
+                                        返回列表
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 关系统计概览 -->
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="material-icons">people</i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3 id="total-members-count">0</h3>
+                                        <p>群组成员数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="material-icons">link</i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3 id="total-relations-count">0</h3>
+                                        <p>关系连接数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="material-icons">star</i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3 id="most-active-member">--</h3>
+                                        <p>最活跃成员</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="material-icons">trending_up</i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h3 id="avg-relation-strength">0.0</h3>
+                                        <p>平均关系强度</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 关系图谱 -->
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h3>关系网络图谱</h3>
+                                    <div class="chart-controls">
+                                        <!-- 2D/3D切换 -->
+                                        <div class="toggle-group" style="margin-right: 15px;">
+                                            <button class="toggle-btn active" data-mode="2d" onclick="switchGraphMode('2d')">
+                                                <i class="material-icons">grid_on</i>
+                                                2D
+                                            </button>
+                                            <button class="toggle-btn" data-mode="3d" onclick="switchGraphMode('3d')">
+                                                <i class="material-icons">3d_rotation</i>
+                                                3D
+                                            </button>
+                                        </div>
+
+                                        <!-- 用户筛选（2D和3D都可用） -->
+                                        <select id="user-filter-select" onchange="filterRelationsByUser()" style="margin-right: 10px;">
+                                            <option value="">显示所有用户关系</option>
+                                        </select>
+
+                                        <!-- 3D主题选择器（仅在3D模式下显示） -->
+                                        <select id="graph-3d-theme" onchange="change3DTheme(this.value)" class="graph-3d-only" style="margin-right: 10px;">
+                                            <option value="default">默认主题</option>
+                                            <option value="cyberpunk">赛博朋克</option>
+                                            <option value="scifi">科幻</option>
+                                            <option value="matrix">黑客帝国</option>
+                                            <option value="sunset">日落</option>
+                                            <option value="ocean">海洋</option>
+                                        </select>
+
+                                        <!-- 2D布局选择器（仅在2D模式下显示） -->
+                                        <select id="relation-layout-type" onchange="updateRelationshipChart()" class="graph-2d-only">
+                                            <option value="force">力导向布局</option>
+                                            <option value="circular">环形布局</option>
+                                        </select>
+
+                                        <!-- 3D控制按钮（仅在3D模式下显示） -->
+                                        <button class="btn btn-sm btn-secondary graph-3d-only" onclick="resetGraph3DCamera()" title="重置视角" style="margin-left: 10px;">
+                                            <i class="material-icons">replay</i>
+                                            重置视角
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- 2D图谱容器 -->
+                                <div id="relationship-graph-chart" class="chart" style="height: 600px;"></div>
+                                <!-- 3D图谱容器 -->
+                                <div id="relationship-graph-3d" class="chart" style="height: 600px; display: none;"></div>
+                            </div>
+
+                            <!-- 成员详细列表 -->
+                            <div class="members-list-container">
+                                <h3><i class="material-icons">list</i> 成员详细信息</h3>
+                                <div class="search-box">
+                                    <input type="text" id="memberSearchInput" placeholder="搜索成员..." onkeyup="filterMembersList()">
+                                    <i class="material-icons">search</i>
+                                </div>
+                                <div id="members-list" class="members-list">
+                                    <!-- 成员列表将在这里动态加载 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 黑话学习页面 -->
+                <div id="jargon-learning-page" class="page">
+                    <div class="jargon-learning-section">
+                        <h2>黑话学习成果</h2>
+
+                        <!-- 学习统计概览 -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">library_books</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="jargon-total-candidates">0</h3>
+                                    <p>候选词条</p>
+                                    <small class="stat-description">发现的疑似黑话总数</small>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">check_circle</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="jargon-confirmed">0</h3>
+                                    <p>确认黑话</p>
+                                    <small class="stat-description">通过三步推断法确认的黑话</small>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">done_all</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="jargon-completed">0</h3>
+                                    <p>推断完成</p>
+                                    <small class="stat-description">完成所有推断阈值的词条</small>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="material-icons">tag</i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="jargon-total-occurrences">0</h3>
+                                    <p>出现次数</p>
+                                    <small class="stat-description">所有黑话的累计出现次数</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 群组筛选和搜索 -->
+                        <div class="jargon-controls">
+                            <div class="control-group">
+                                <label for="jargon-group-filter">群组筛选:</label>
+                                <select id="jargon-group-filter" onchange="loadJargonList()">
+                                    <option value="">全部群组</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label for="jargon-status-filter">状态筛选:</label>
+                                <select id="jargon-status-filter" onchange="loadJargonList()">
+                                    <option value="true">仅已确认黑话</option>
+                                    <option value="false">全部候选词条</option>
+                                </select>
+                            </div>
+                            <div class="control-group search-group">
+                                <input type="text" id="jargon-search-input" placeholder="搜索黑话...">
+                                <button class="btn btn-primary" onclick="searchJargon()">
+                                    <i class="material-icons">search</i>
+                                    搜索
+                                </button>
+                            </div>
+                            <button class="btn btn-secondary" onclick="refreshJargonPage()">
+                                <i class="material-icons">refresh</i>
+                                刷新
+                            </button>
+                        </div>
+
+                        <!-- 全局黑话共享区域 -->
+                        <div class="global-jargon-section">
+                            <div class="section-header-row">
+                                <h3><i class="material-icons">share</i> 全局共享黑话库</h3>
+                                <div class="global-jargon-actions">
+                                    <button class="btn btn-info btn-small" onclick="toggleGlobalJargonPanel()">
+                                        <i class="material-icons">visibility</i>
+                                        <span id="global-panel-toggle-text">展开</span>
+                                    </button>
+                                    <button class="btn btn-success btn-small" onclick="showSyncDialog()">
+                                        <i class="material-icons">sync</i>
+                                        同步到群组
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="global-jargon-panel" class="global-jargon-panel" style="display: none;">
+                                <div class="global-jargon-stats">
+                                    <span>全局共享: <strong id="global-jargon-count">0</strong> 条</span>
+                                </div>
+                                <div id="global-jargon-list" class="jargon-list compact">
+                                    <div class="loading-message">点击展开查看全局黑话...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 黑话列表 -->
+                        <div class="jargon-list-container">
+                            <h3><i class="material-icons">list</i> 学习到的黑话</h3>
+                            <div id="jargon-list" class="jargon-list">
+                                <div class="loading-message">正在加载黑话列表...</div>
+                            </div>
+                        </div>
+
+                        <!-- 推断阈值说明 -->
+                        <div class="jargon-info-section">
+                            <h3><i class="material-icons">info</i> 三步推断法说明</h3>
+                            <div class="info-content">
+                                <p><strong>推断原理：</strong>通过对比"有上下文"和"无上下文"两种情况下对词条含义的推断结果来判断是否为黑话。如果两个推断结果相似，说明词条含义明确（不是黑话）；如果不同，说明需要上下文才能理解（是黑话）。</p>
+                                <p><strong>渐进式验证：</strong>在词条出现次数达到 3, 6, 10, 20, 40, 60, 100 次时分别进行推断验证，随着上下文增多，推断结果更加准确。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bug 自助提交浮动入口 -->
+    <div class="bug-assistant-wrapper" aria-live="polite">
+        <button class="bug-assistant-fab" id="bugAssistantFab" aria-label="Bug 自助提交助手" aria-expanded="false">
+            <span class="material-icons">bug_report</span>
+        </button>
+        <section class="bug-assistant-panel" id="bugAssistantPanel" aria-hidden="true" role="dialog" aria-label="Bug 自助提交助手">
+            <header class="bug-panel-header">
+                <div>
+                    <h4>Bug 自助提交 (Beta)</h4>
+                    <p>内置提炼模型 · 智能排查助手</p>
+                </div>
+                <button class="bug-panel-close" id="bugAssistantClose" aria-label="关闭Bug助手">
+                    <span class="material-icons">close</span>
+                </button>
+            </header>
+            <div class="bug-panel-body">
+                <div class="assistant-status-card" id="bugAssistantStatusCard">
+                    <div class="status-icon">
+                        <span class="material-icons">engineering</span>
+                    </div>
+                    <div class="status-text">
+                        <p class="status-title">初始化中...</p>
+                        <p class="status-desc">正在读取Bug接口配置</p>
+                        <p class="status-hint">自动附带日志</p>
+                    </div>
+                </div>
+                <form class="bug-form disabled" id="bugAssistantForm">
+                    <div class="form-group">
+                        <label class="form-label" for="bugAssistantTitle">问题标题</label>
+                        <input type="text" id="bugAssistantTitle" placeholder="示例：登录按钮点击无响应" disabled>
+                    </div>
+                    <div class="bug-form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="bugSeverity">严重程度</label>
+                            <select id="bugSeverity" disabled></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="bugPriority">优先级</label>
+                            <select id="bugPriority" disabled></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="bugType">问题类型</label>
+                            <select id="bugType" disabled></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bugBuild">所属版本 / 构建</label>
+                        <input type="text" id="bugBuild" placeholder="例如：v2.0" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bugSteps">复现步骤</label>
+                        <textarea id="bugSteps" placeholder="1. 打开页面；2. 点击...；3. 观察结果..." disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bugDescription">实际表现 / 预期</label>
+                        <textarea id="bugDescription" placeholder="描述实际表现以及期望行为" disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bugEnvironment">运行环境补充</label>
+                        <textarea id="bugEnvironment" placeholder="系统/浏览器、插件版本、其他有助排查的信息" disabled></textarea>
+                    </div>
+                    <label class="checkbox-row">
+                        <input type="checkbox" id="bugIncludeLogs" checked disabled>
+                        <span>自动附带 AstrBot 近期日志</span>
+                    </label>
+                    <div class="bug-form-actions">
+                        <button type="button" class="ghost-btn" id="bugResetForm" disabled>清空表单</button>
+                        <button class="primary-btn" id="bugAssistantSubmit" type="submit" disabled>提交到服务器</button>
+                    </div>
+                </form>
+                <div class="bug-log-preview" id="bugLogPreview">
+                    <p class="muted-text">正在收集日志预览...</p>
+                </div>
+            </div>
+            <footer class="bug-panel-footer">
+                <small>智能提炼描述 · 自动附带日志。</small>
+            </footer>
+        </section>
+    </div>
+    <!-- Three.js库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- 3D社交关系图谱 -->
+    <script src="/static/js/social_graph_3d.js"></script>
+    <!-- 主脚本 -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

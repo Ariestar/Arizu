@@ -1,0 +1,42 @@
+{
+  "enable": {
+    "description": "启用消息防抖动功能",
+    "type": "bool",
+    "default": true,
+    "hint": "关闭后插件将不会拦截和合并消息。注意：本插件强制仅在私聊启用，以避免群聊越权问题。",
+    "obvious_hint": true
+  },
+  "debounce_time": {
+    "description": "防抖时间（秒）",
+    "type": "float",
+    "default": 2.0,
+    "hint": "用户在此时间内发送的多条消息会被合并成一条。建议设置为 1.5-3.0 秒",
+    "obvious_hint": true
+  },
+  "command_prefixes": {
+    "description": "指令前缀列表",
+    "type": "list",
+    "default": ["/"],
+    "hint": "以这些前缀开头的消息会被识别为指令，不会被合并。默认为 ['/']",
+    "invisible": false
+  },
+  "merge_separator": {
+    "description": "消息合并分隔符",
+    "type": "string",
+    "default": "\n",
+    "hint": "多条消息合并时使用的分隔符，默认为换行符"
+  },
+  "enable_forward_analysis": {
+    "description": "启用合并转发消息分析",
+    "type": "bool",
+    "default": true,
+    "hint": "是否自动提取QQ合并转发消息的内容并纳入防抖处理（仅aiocqhttp平台支持）",
+    "obvious_hint": true
+  },
+  "forward_prefix": {
+    "description": "合并转发内容前缀",
+    "type": "string",
+    "default": "【合并转发内容】\n",
+    "hint": "在提取的合并转发内容前添加的标识前缀"
+  }
+}

@@ -1,0 +1,9 @@
+﻿{
+    "timezone": "Asia/Shanghai",
+    "enable_holiday_perception": true,
+    "enable_platform_perception": true,
+    "enable_lunar_perception": true,
+    "enable_solar_term_perception": true,
+    "enable_almanac_perception": false,
+    "holiday_country": "CN"
+}

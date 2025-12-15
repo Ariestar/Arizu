@@ -1,0 +1,25 @@
+﻿{
+    "group_msg_history": 20,
+    "enabled_groups": [],
+    "enabled_private": false,
+    "filter_thinking": true,
+    "persona": "",
+    "read_air": false,
+    "use_func_tool": false,
+    "model_frequency": {
+        "keywords": [],
+        "blacklist_keywords": [],
+        "method": "概率回复",
+        "probability": {
+            "probability": 0.1
+        }
+    },
+    "image_processing": {
+        "image_count": 0,
+        "use_image_caption": false,
+        "image_caption_provider_id": "",
+        "image_caption_prompt": "请直接简短描述这张图片",
+        "enable_image_persistence": true,
+        "image_retention_days": 7
+    }
+}

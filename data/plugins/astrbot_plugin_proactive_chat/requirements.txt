@@ -1,0 +1,4 @@
+# 本插件的核心依赖 APScheduler 和 aiofiles 已包含在 AstrBot 的默认依赖中，通常无需额外安装。
+# 此文件主要用于明确声明依赖，以备不时之需。
+apscheduler
+aiofiles

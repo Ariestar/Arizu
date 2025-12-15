@@ -1,0 +1,32 @@
+{
+  "enable_plugin": {
+    "description": "插件总开关",
+    "type": "bool",
+    "default": true,
+    "hint": "关闭后，此插件所有功能都将失效。"
+  },
+  "enable_immersive_chat": {
+    "description": "启用沉浸式对话功能",
+    "type": "bool",
+    "default": true,
+    "hint": "机器人回复某用户后，会限时等待该用户的下一条消息，并交由LLM判断是否跟进回复。这会让对话更连贯。"
+  },
+  "immersive_chat_timeout": {
+    "description": "沉浸式对话等待超时（秒）",
+    "type": "int",
+    "default": 100,
+    "hint": "在机器人回复后，需要等待用户多久。超过这个时间，沉浸式对话状态将自动失效。"
+  },
+  "enable_proactive_reply": {
+    "description": "启用主动插话功能",
+    "type": "bool",
+    "default": true,
+    "hint": "允许机器人在发言后，根据后续的聊天内容判断是否主动插话。"
+  },
+  "proactive_reply_delay": {
+    "description": "主动插话延迟时间（秒）",
+    "type": "int",
+    "default": 8,
+    "hint": "机器人在群内发言后，等待多少秒再收集聊天记录进行判断。建议设置在5-30秒之间。"
+  }
+}

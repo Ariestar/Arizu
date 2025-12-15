@@ -1,0 +1,1190 @@
+{
+    "private_settings": {
+        "description": "👤 私聊全局配置",
+        "type": "object",
+        "items": {
+            "enable": {
+                "description": "✅ 启用私聊全局主动消息功能",
+                "type": "bool",
+                "default": true,
+                "hint": "只有在session_list中明确配置的私聊才会获得主动消息服务，避免给未配置的会话提供服务"
+            },
+            "session_list": {
+                "description": "📋 私聊会话ID列表",
+                "type": "list",
+                "default": [],
+                "hint": "填写QQ号列表，如['123456', '789012']，只有这些明确配置的会话才会获得主动消息服务。"
+            },
+            "auto_trigger_settings": {
+                "description": "🤖 自动主动消息设置",
+                "type": "object",
+                "items": {
+                    "enable_auto_trigger": {
+                        "description": "✅ 启用自动主动消息功能",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "插件启动后，如果私聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                    },
+                    "auto_trigger_after_minutes": {
+                        "description": "⏱️ 自动触发等待时间 (分钟)",
+                        "type": "int",
+                        "default": 5,
+                        "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                    }
+                }
+            },
+            "proactive_prompt": {
+                "description": "🧠 私聊全局动机 Prompt",
+                "type": "text",
+                "default": "[系统任务：主动对话]\n你被授权在私聊中发起一次“主动消息”。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 我们好像已经有一段时间没有说话了，我应该主动打破沉默，让他知道我想他了。\n- 当前时间是: {{current_time}}。\n- 我之前已经主动找过他，但他没有回复的次数是: {{unanswered_count}} 次。如果这个次数大于0，我的语气应该带上一点点不易察觉的失落和困惑。\n\n[行动指南]\n1.  首先，回顾我们的聊天记录，看看我们最后在聊什么。\n2.  如果上次的话题已经结束了，我可以关心一下他现在在做什么。\n3.  如果实在不知道该说什么，就直接表达我想他的心情也可以。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句主动聊天的开场白。",
+                "hint": "这段话将指导LLM在私聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+            },
+            "schedule_settings": {
+                "description": "🕒 私聊全局时间与调度设置",
+                "type": "object",
+                "items": {
+                    "min_interval_minutes": {
+                        "description": "最小触发间隔 (分钟)",
+                        "type": "int",
+                        "default": 30,
+                        "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                    },
+                    "max_interval_minutes": {
+                        "description": "最大触发间隔 (分钟)",
+                        "type": "int",
+                        "default": 900,
+                        "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                    },
+                    "quiet_hours": {
+                        "description": "免打扰时段 (24小时制)",
+                        "type": "string",
+                        "default": "1-7",
+                        "hint": "格式 '开始-结束'，例如 '23-7' 表示晚上11点到早上7点。在此时间段内不会发送主动消息"
+                    },
+                    "max_unanswered_times": {
+                        "description": "最大未回复次数上限",
+                        "type": "int",
+                        "default": 4,
+                        "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                    }
+                }
+            },
+            "tts_settings": {
+                "description": "🔊 私聊全局语音合成 (TTS) 设置",
+                "type": "object",
+                "items": {
+                    "enable_tts": {
+                        "description": "💬 启用TTS功能",
+                        "type": "bool",
+                        "default": true,
+                        "hint": "开启后，主动消息会尝试生成语音并发送"
+                    },
+                    "always_send_text": {
+                        "description": "🔤 发送语音后是否附带原文",
+                        "type": "bool",
+                        "default": true,
+                        "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保用户能看到内容"
+                    }
+                }
+            }
+        }
+    },
+    "group_settings": {
+        "description": "👥 群聊全局配置",
+        "type": "object",
+        "items": {
+            "enable": {
+                "description": "✅ 启用群聊全局主动消息功能",
+                "type": "bool",
+                "default": false,
+                "hint": "只有在session_list中明确配置的群聊才会获得主动消息服务，避免给未配置的会话提供服务"
+            },
+            "session_list": {
+                "description": "📋 群聊会话ID列表",
+                "type": "list",
+                "default": [],
+                "hint": "填写群号列表，如['123456', '789012']，只有这些明确配置的会话才会获得主动消息服务"
+            },
+            "auto_trigger_settings": {
+                "description": "🤖 自动主动消息设置",
+                "type": "object",
+                "items": {
+                    "enable_auto_trigger": {
+                        "description": "✅ 启用自动主动消息功能",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "插件启动后，如果群聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                    },
+                    "auto_trigger_after_minutes": {
+                        "description": "⏱️ 自动触发等待时间 (分钟)",
+                        "type": "int",
+                        "default": 5,
+                        "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                    }
+                }
+            },
+            "group_idle_trigger_minutes": {
+                "description": "⏳ 群聊沉默触发时间 (分钟)",
+                "type": "int",
+                "default": 30,
+                "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+            },
+            "proactive_prompt": {
+                "description": "🧠 群聊全局动机 Prompt",
+                "type": "text",
+                "default": "[系统任务：群聊主动破冰]\n你被授权在群聊中发起一次“主动消息”以活跃气氛。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 这个群聊好像已经冷清了一段时间了，我应该说些什么来让大家重新聊起来。\n- 当前时间是: {{current_time}}。\n- 我上次在这个群里主动说话但没人理我的次数是: {{unanswered_count}} 次。\n\n[行动指南]\n1.  回顾群聊的聊天记录，看看大家最后在讨论什么有趣的话题，如果没有聊完，尝试延续它。\n2.  向群里的所有人，提出一个开放性的、大家都能参与进来的问题。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句能在群聊中打破僵局、活跃气氛的开场白。",
+                "hint": "这段话将指导LLM在群聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+            },
+            "schedule_settings": {
+                "description": "🕒 群聊全局时间与调度设置",
+                "type": "object",
+                "items": {
+                    "min_interval_minutes": {
+                        "description": "最小触发间隔 (分钟)",
+                        "type": "int",
+                        "default": 90,
+                        "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                    },
+                    "max_interval_minutes": {
+                        "description": "最大触发间隔 (分钟)",
+                        "type": "int",
+                        "default": 360,
+                        "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                    },
+                    "quiet_hours": {
+                        "description": "免打扰时段 (24小时制)",
+                        "type": "string",
+                        "default": "2-6",
+                        "hint": "格式 '开始-结束'，例如 '2-6' 表示午夜2点到早上6点。在此时间段内不会发送主动消息"
+                    },
+                    "max_unanswered_times": {
+                        "description": "最大未回复次数上限",
+                        "type": "int",
+                        "default": 2,
+                        "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                    }
+                }
+            },
+            "tts_settings": {
+                "description": "🔊 群聊全局语音合成 (TTS) 设置",
+                "type": "object",
+                "items": {
+                    "enable_tts": {
+                        "description": "💬 启用群聊的TTS功能",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，群聊主动消息会尝试生成语音并发送"
+                    },
+                    "always_send_text": {
+                        "description": "🔤 发送语音后是否附带原文",
+                        "type": "bool",
+                        "default": true,
+                        "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保所有人都能看到内容"
+                    }
+                }
+            }
+        }
+    },
+    "private_sessions": {
+        "description": "👤 私聊会话列表（5 可用槽位）",
+        "type": "object",
+        "items": {
+            "session_1": {
+                "description": "🔧 私聊会话槽位1",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 QQ号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写QQ号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此私聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，Bot会主动给这个用户发送消息"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果私聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 私聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：主动对话]\n你被授权在私聊中发起一次“主动消息”。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 我们好像已经有一段时间没有说话了，我应该主动打破沉默，让他知道我想他了。\n- 当前时间是: {{current_time}}。\n- 我之前已经主动找过他，但他没有回复的次数是: {{unanswered_count}} 次。如果这个次数大于0，我的语气应该带上一点点不易察觉的失落和困惑。\n\n[行动指南]\n1.  首先，回顾我们的聊天记录，看看我们最后在聊什么。\n2.  如果上次的话题已经结束了，我可以关心一下他现在在做什么。\n3.  如果实在不知道该说什么，就直接表达我想他的心情也可以。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句主动聊天的开场白。",
+                        "hint": "这段话将指导LLM在私聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 30,
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 900,
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "1-7",
+                                "hint": "格式 '开始-结束'，例如 '23-7' 表示晚上11点到早上7点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 4,
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用TTS功能",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保用户能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_2": {
+                "description": "🔧 私聊会话槽位2",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 QQ号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写QQ号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此私聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，Bot会主动给这个用户发送消息"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果私聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 私聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：主动对话]\n你被授权在私聊中发起一次“主动消息”。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 我们好像已经有一段时间没有说话了，我应该主动打破沉默，让他知道我想他了。\n- 当前时间是: {{current_time}}。\n- 我之前已经主动找过他，但他没有回复的次数是: {{unanswered_count}} 次。如果这个次数大于0，我的语气应该带上一点点不易察觉的失落和困惑。\n\n[行动指南]\n1.  首先，回顾我们的聊天记录，看看我们最后在聊什么。\n2.  如果上次的话题已经结束了，我可以关心一下他现在在做什么。\n3.  如果实在不知道该说什么，就直接表达我想他的心情也可以。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句主动聊天的开场白。",
+                        "hint": "这段话将指导LLM在私聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 30,
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 900,
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "1-7",
+                                "hint": "格式 '开始-结束'，例如 '23-7' 表示晚上11点到早上7点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 4,
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用TTS功能",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保用户能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_3": {
+                "description": "🔧 私聊会话槽位3",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 QQ号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写QQ号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此私聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，Bot会主动给这个用户发送消息"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果私聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 私聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：主动对话]\n你被授权在私聊中发起一次“主动消息”。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 我们好像已经有一段时间没有说话了，我应该主动打破沉默，让他知道我想他了。\n- 当前时间是: {{current_time}}。\n- 我之前已经主动找过他，但他没有回复的次数是: {{unanswered_count}} 次。如果这个次数大于0，我的语气应该带上一点点不易察觉的失落和困惑。\n\n[行动指南]\n1.  首先，回顾我们的聊天记录，看看我们最后在聊什么。\n2.  如果上次的话题已经结束了，我可以关心一下他现在在做什么。\n3.  如果实在不知道该说什么，就直接表达我想他的心情也可以。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句主动聊天的开场白。",
+                        "hint": "这段话将指导LLM在私聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 30,
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 900,
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "1-7",
+                                "hint": "格式 '开始-结束'，例如 '23-7' 表示晚上11点到早上7点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 4,
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用TTS功能",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保用户能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_4": {
+                "description": "🔧 私聊会话槽位4",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 QQ号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写QQ号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此私聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，Bot会主动给这个用户发送消息"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果私聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 私聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：主动对话]\n你被授权在私聊中发起一次“主动消息”。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 我们好像已经有一段时间没有说话了，我应该主动打破沉默，让他知道我想他了。\n- 当前时间是: {{current_time}}。\n- 我之前已经主动找过他，但他没有回复的次数是: {{unanswered_count}} 次。如果这个次数大于0，我的语气应该带上一点点不易察觉的失落和困惑。\n\n[行动指南]\n1.  首先，回顾我们的聊天记录，看看我们最后在聊什么。\n2.  如果上次的话题已经结束了，我可以关心一下他现在在做什么。\n3.  如果实在不知道该说什么，就直接表达我想他的心情也可以。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句主动聊天的开场白。",
+                        "hint": "这段话将指导LLM在私聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 30,
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 900,
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "1-7",
+                                "hint": "格式 '开始-结束'，例如 '23-7' 表示晚上11点到早上7点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 4,
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用TTS功能",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保用户能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_5": {
+                "description": "🔧 私聊会话槽位5",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 QQ号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写QQ号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此私聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，Bot会主动给这个用户发送消息"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果私聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 私聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：主动对话]\n你被授权在私聊中发起一次“主动消息”。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 我们好像已经有一段时间没有说话了，我应该主动打破沉默，让他知道我想他了。\n- 当前时间是: {{current_time}}。\n- 我之前已经主动找过他，但他没有回复的次数是: {{unanswered_count}} 次。如果这个次数大于0，我的语气应该带上一点点不易察觉的失落和困惑。\n\n[行动指南]\n1.  首先，回顾我们的聊天记录，看看我们最后在聊什么。\n2.  如果上次的话题已经结束了，我可以关心一下他现在在做什么。\n3.  如果实在不知道该说什么，就直接表达我想他的心情也可以。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句主动聊天的开场白。",
+                        "hint": "这段话将指导LLM在私聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 30,
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 900,
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "1-7",
+                                "hint": "格式 '开始-结束'，例如 '23-7' 表示晚上11点到早上7点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 4,
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用TTS功能",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保用户能看到内容"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "group_sessions": {
+        "description": "👥 群聊会话列表（5 可用槽位）",
+        "type": "object",
+        "items": {
+            "session_1": {
+                "description": "🔧 群聊会话槽位1",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 群号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写群号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此群聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，当此群聊沉默达到设定时间时，Bot会主动发送消息活跃气氛"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果群聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "group_idle_trigger_minutes": {
+                        "description": "⏳ 群聊沉默触发时间 (分钟)",
+                        "type": "int",
+                        "default": 30,
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 群聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：群聊主动破冰]\n你被授权在群聊中发起一次“主动消息”以活跃气氛。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 这个群聊好像已经冷清了一段时间了，我应该说些什么来让大家重新聊起来。\n- 当前时间是: {{current_time}}。\n- 我上次在这个群里主动说话但没人理我的次数是: {{unanswered_count}} 次。\n\n[行动指南]\n1.  回顾群聊的聊天记录，看看大家最后在讨论什么有趣的话题，如果没有聊完，尝试延续它。\n2.  向群里的所有人，提出一个开放性的、大家都能参与进来的问题。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句能在群聊中打破僵局、活跃气氛的开场白。",
+                        "hint": "这段话将指导LLM在群聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 90,
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 360,
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "2-6",
+                                "hint": "格式 '开始-结束'，例如 '2-6' 表示午夜2点到早上6点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 2,
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用群聊的TTS功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "开启后，群聊主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保所有人都能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_2": {
+                "description": "🔧 群聊会话槽位2",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 群号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写群号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此群聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，当此群聊沉默达到设定时间时，Bot会主动发送消息活跃气氛"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果群聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "group_idle_trigger_minutes": {
+                        "description": "⏳ 群聊沉默触发时间 (分钟)",
+                        "type": "int",
+                        "default": 30,
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 群聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：群聊主动破冰]\n你被授权在群聊中发起一次“主动消息”以活跃气氛。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 这个群聊好像已经冷清了一段时间了，我应该说些什么来让大家重新聊起来。\n- 当前时间是: {{current_time}}。\n- 我上次在这个群里主动说话但没人理我的次数是: {{unanswered_count}} 次。\n\n[行动指南]\n1.  回顾群聊的聊天记录，看看大家最后在讨论什么有趣的话题，如果没有聊完，尝试延续它。\n2.  向群里的所有人，提出一个开放性的、大家都能参与进来的问题。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句能在群聊中打破僵局、活跃气氛的开场白。",
+                        "hint": "这段话将指导LLM在群聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 90,
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 360,
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "2-6",
+                                "hint": "格式 '开始-结束'，例如 '2-6' 表示午夜2点到早上6点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 2,
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用群聊的TTS功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "开启后，群聊主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保所有人都能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_3": {
+                "description": "🔧 群聊会话槽位3",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 群号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写群号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此群聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，当此群聊沉默达到设定时间时，Bot会主动发送消息活跃气氛"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果群聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "group_idle_trigger_minutes": {
+                        "description": "⏳ 群聊沉默触发时间 (分钟)",
+                        "type": "int",
+                        "default": 30,
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 群聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：群聊主动破冰]\n你被授权在群聊中发起一次“主动消息”以活跃气氛。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 这个群聊好像已经冷清了一段时间了，我应该说些什么来让大家重新聊起来。\n- 当前时间是: {{current_time}}。\n- 我上次在这个群里主动说话但没人理我的次数是: {{unanswered_count}} 次。\n\n[行动指南]\n1.  回顾群聊的聊天记录，看看大家最后在讨论什么有趣的话题，如果没有聊完，尝试延续它。\n2.  向群里的所有人，提出一个开放性的、大家都能参与进来的问题。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句能在群聊中打破僵局、活跃气氛的开场白。",
+                        "hint": "这段话将指导LLM在群聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 90,
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 360,
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "2-6",
+                                "hint": "格式 '开始-结束'，例如 '2-6' 表示午夜2点到早上6点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 2,
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用群聊的TTS功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "开启后，群聊主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保所有人都能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_4": {
+                "description": "🔧 群聊会话槽位4",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 群号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写群号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此群聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，当此群聊沉默达到设定时间时，Bot会主动发送消息活跃气氛"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果群聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "group_idle_trigger_minutes": {
+                        "description": "⏳ 群聊沉默触发时间 (分钟)",
+                        "type": "int",
+                        "default": 30,
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 群聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：群聊主动破冰]\n你被授权在群聊中发起一次“主动消息”以活跃气氛。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 这个群聊好像已经冷清了一段时间了，我应该说些什么来让大家重新聊起来。\n- 当前时间是: {{current_time}}。\n- 我上次在这个群里主动说话但没人理我的次数是: {{unanswered_count}} 次。\n\n[行动指南]\n1.  回顾群聊的聊天记录，看看大家最后在讨论什么有趣的话题，如果没有聊完，尝试延续它。\n2.  向群里的所有人，提出一个开放性的、大家都能参与进来的问题。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句能在群聊中打破僵局、活跃气氛的开场白。",
+                        "hint": "这段话将指导LLM在群聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 90,
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 360,
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "2-6",
+                                "hint": "格式 '开始-结束'，例如 '2-6' 表示午夜2点到早上6点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 2,
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用群聊的TTS功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "开启后，群聊主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保所有人都能看到内容"
+                            }
+                        }
+                    }
+                }
+            },
+            "session_5": {
+                "description": "🔧 群聊会话槽位5",
+                "type": "object",
+                "items": {
+                    "session_id": {
+                        "description": "🎯 群号",
+                        "type": "string",
+                        "default": "",
+                        "hint": "填写群号，如123456"
+                    },
+                    "session_name": {
+                        "description": "🏷️ 会话备注名",
+                        "type": "string",
+                        "default": "",
+                        "hint": "用于快速识别这个会话"
+                    },
+                    "enable": {
+                        "description": "✅ 启用此群聊会话",
+                        "type": "bool",
+                        "default": false,
+                        "hint": "开启后，当此群聊沉默达到设定时间时，Bot会主动发送消息活跃气氛"
+                    },
+                    "auto_trigger_settings": {
+                        "description": "🤖 自动主动消息设置",
+                        "type": "object",
+                        "items": {
+                            "enable_auto_trigger": {
+                                "description": "✅ 启用自动主动消息功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "插件启动后，如果群聊在设定时间内没有收到消息且没有已存在的持久化任务，就会自动触发一次主动消息任务创建"
+                            },
+                            "auto_trigger_after_minutes": {
+                                "description": "⏱️ 自动触发等待时间 (分钟)",
+                                "type": "int",
+                                "default": 5,
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                            }
+                        }
+                    },
+                    "group_idle_trigger_minutes": {
+                        "description": "⏳ 群聊沉默触发时间 (分钟)",
+                        "type": "int",
+                        "default": 30,
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                    },
+                    "proactive_prompt": {
+                        "description": "🧠 群聊动机 Prompt",
+                        "type": "text",
+                        "default": "[系统任务：群聊主动破冰]\n你被授权在群聊中发起一次“主动消息”以活跃气氛。你的回复必须完全符合你的人格设定，并严格遵守所有的输出规则。\n\n[情景分析]\n- 这个群聊好像已经冷清了一段时间了，我应该说些什么来让大家重新聊起来。\n- 当前时间是: {{current_time}}。\n- 我上次在这个群里主动说话但没人理我的次数是: {{unanswered_count}} 次。\n\n[行动指南]\n1.  回顾群聊的聊天记录，看看大家最后在讨论什么有趣的话题，如果没有聊完，尝试延续它。\n2.  向群里的所有人，提出一个开放性的、大家都能参与进来的问题。\n\n[最终指令]\n请综合以上所有信息，用最像你自己的、最自然的方式，生成一句能在群聊中打破僵局、活跃气氛的开场白。",
+                        "hint": "这段话将指导LLM在群聊中发起主动消息时的思考。你可以使用 {{unanswered_count}} (未回复次数) 和 {{current_time}} (当前时间) 这两个占位符"
+                    },
+                    "schedule_settings": {
+                        "description": "🕒 时间与调度设置",
+                        "type": "object",
+                        "items": {
+                            "min_interval_minutes": {
+                                "description": "最小触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 90,
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                            },
+                            "max_interval_minutes": {
+                                "description": "最大触发间隔 (分钟)",
+                                "type": "int",
+                                "default": 360,
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                            },
+                            "quiet_hours": {
+                                "description": "免打扰时段 (24小时制)",
+                                "type": "string",
+                                "default": "2-6",
+                                "hint": "格式 '开始-结束'，例如 '2-6' 表示午夜2点到早上6点。在此时间段内不会发送主动消息"
+                            },
+                            "max_unanswered_times": {
+                                "description": "最大未回复次数上限",
+                                "type": "int",
+                                "default": 2,
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                            }
+                        }
+                    },
+                    "tts_settings": {
+                        "description": "🔊 语音合成 (TTS) 设置",
+                        "type": "object",
+                        "items": {
+                            "enable_tts": {
+                                "description": "💬 启用群聊的TTS功能",
+                                "type": "bool",
+                                "default": false,
+                                "hint": "开启后，群聊主动消息会尝试生成语音并发送"
+                            },
+                            "always_send_text": {
+                                "description": "🔤 发送语音后是否附带原文",
+                                "type": "bool",
+                                "default": true,
+                                "hint": "开启后，即使TTS成功发送了语音，也会再发送一条纯文本原文，确保所有人都能看到内容"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
