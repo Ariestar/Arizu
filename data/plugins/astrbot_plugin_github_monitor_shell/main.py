@@ -8,43 +8,26 @@ from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register
 from astrbot.core.star import StarTools
 from .services.github_service import GitHubService
-from .services.notification_service import NotificationService
+from .services.notification_service import NotificationService, format_commit_datetime
 
 
 # 移除了 global_vars 的导入
 
 
-@register("GitHub监控插件", "Shell", "定时监控GitHub仓库commit变化并发送通知", "1.2.0",
+@register("GitHub监控插件", "Shell", "定时监控GitHub仓库commit变化并发送通知", "1.2.3",
           "https://github.com/1592363624/astrbot_plugin_github_monitor_shell")
 class GitHubMonitorPlugin(Star):
     def __init__(self, context: Context, config=None):
         super().__init__(context)
         self.config = config or {}
         self.github_service = GitHubService(self.config.get("github_token", ""))
-        self.notification_service = NotificationService(context)
+        self.notification_service = NotificationService(context, self.config)
         plugin_data_dir = StarTools.get_data_dir("GitHub监控插件")
         self.data_file = os.path.join(plugin_data_dir, "commits.json")
-        self.bot_instance = None  # 将全局变量改为类实例变量
         self.monitoring_started = False  # 添加标志以跟踪监控是否已启动
+        self._monitor_task: asyncio.Task | None = None
         self._ensure_data_dir()
-
-    @filter.event_message_type(filter.EventMessageType.ALL, priority=999)
-    async def _capture_bot_instance(self, event: AstrMessageEvent):
-        """捕获机器人实例用于后台任务"""
-
-        if self.bot_instance is None and event.get_platform_name() == "aiocqhttp":
-            try:
-                from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import AiocqhttpMessageEvent
-                if isinstance(event, AiocqhttpMessageEvent):
-                    self.bot_instance = event.bot
-                    self.platform_name = "aiocqhttp"
-                    logger.info("成功捕获 aiocqhttp 机器人实例，后台 API 调用已启用。")
-                    # 在捕获到 bot_instance 后启动监控
-                    self._start_monitoring()
-                    # 重试之前失败的通知
-                    await self.notification_service.retry_failed_notifications()
-            except ImportError:
-                logger.warning("无法导入 AiocqhttpMessageEvent，后台 API 调用可能受限。")
+        self._start_monitoring()
 
     def _ensure_data_dir(self):
         """确保数据目录存在"""
@@ -74,9 +57,21 @@ class GitHubMonitorPlugin(Star):
         """启动监控任务"""
         # 只启动一次监控任务
         if not self.monitoring_started:
-            asyncio.create_task(self._monitor_loop())
+            self._monitor_task = asyncio.create_task(self._monitor_loop())
             self.monitoring_started = True
             logger.info("GitHub 监控任务已启动")
+
+    async def terminate(self):
+        if self._monitor_task and not self._monitor_task.done():
+            self._monitor_task.cancel()
+            try:
+                await self._monitor_task
+            except asyncio.CancelledError:
+                pass
+            except Exception as e:
+                logger.warning(f"终止监控任务时出错: {str(e)}")
+        self.monitoring_started = False
+        self._monitor_task = None
 
     async def _monitor_loop(self):
         """监控循环"""
@@ -237,8 +232,20 @@ class GitHubMonitorPlugin(Star):
 
                 message += f"📁 {repo_key}\n"
                 if commit_info:
+                    date_str = commit_info.get("date")
+                    formatted_date = None
+                    if date_str:
+                        formatted_date = format_commit_datetime(
+                            date_str,
+                            self.config.get("time_zone", "Asia/Shanghai"),
+                            self.config.get("time_format", "%Y-%m-%d %H:%M:%S"),
+                        )
+
                     message += f"  最新Commit: {commit_info['sha'][:7]}\n"
-                    message += f"  更新时间: {commit_info['date']}\n"
+                    if formatted_date:
+                        message += f"  更新时间: {formatted_date}\n"
+                    else:
+                        message += f"  更新时间: 未知\n"
                 else:
                     message += f"  状态: 未监控到数据\n"
                 message += "\n"

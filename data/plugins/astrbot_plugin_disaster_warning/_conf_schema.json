@@ -48,11 +48,11 @@
             "default": true,
             "hint": "通过FAN Studio WebSocket接收中国地震台网地震测定信息"
           },
-          "japan_jma_earthquake": {
-            "description": "日本气象厅（JMA）：地震情报",
+          "japan_jma_eew": {
+            "description": "日本气象厅（JMA）：紧急地震速报",
             "type": "bool",
             "default": true,
-            "hint": "通过FAN Studio WebSocket接收日本气象厅地震情报"
+            "hint": "通过FAN Studio WebSocket接收日本气象厅地震预警信息"
           },
           "usgs_earthquake": {
             "description": "美国地质调查局（USGS）：地震测定",
@@ -152,22 +152,70 @@
           "enabled": {
             "description": "启用Global Quake数据源",
             "type": "bool",
-            "hint": "测试性功能，不保证稳定性",
+            "hint": "测试性功能，目前基本处于不可用状态",
             "default": true
           },
           "primary_server": {
-            "description": "主服务器",
-            "type": "bool",
-            "default": true,
-            "hint": "连接主服务器"
+            "description": "主服务器地址",
+            "type": "string",
+            "default": "server-backup.globalquake.net"
+          },
+          "primary_port": {
+            "description": "主服务器端口",
+            "type": "int",
+            "default": 38000
           },
           "secondary_server": {
-            "description": "备用服务器",
-            "type": "bool",
-            "default": false,
-            "hint": "连接备用服务器（如果配置了不同的地址）"
+            "description": "备用服务器地址",
+            "type": "string",
+            "default": "server-backup.globalquake.net"
+          },
+          "secondary_port": {
+            "description": "备用服务器端口",
+            "type": "int",
+            "default": 38000
           }
         }
+      }
+    }
+  },
+  "local_monitoring": {
+    "description": "本地烈度监控配置",
+    "type": "object",
+    "hint": "配置机器人所在位置，计算本地预估烈度",
+    "items": {
+      "enabled": {
+        "description": "启用本地监控",
+        "type": "bool",
+        "default": false
+      },
+      "latitude": {
+        "description": "本地纬度",
+        "type": "float",
+        "default": 39.9042
+      },
+      "longitude": {
+        "description": "本地经度",
+        "type": "float",
+        "default": 116.4074
+      },
+      "place_name": {
+        "description": "本地地名",
+        "type": "string",
+        "hint": "用于在推送的预警消息中标识您的“本地监控”位置",
+        "default": "本地"
+      },
+      "strict_mode": {
+        "description": "严格过滤模式",
+        "type": "bool",
+        "hint": "开启后，如果本地烈度未达标，将忽略所有通知（包括其他地区的大地震）",
+        "default": false
+      },
+      "intensity_threshold": {
+        "description": "通知阈值(烈度)",
+        "type": "float",
+        "hint": "只有当本地预估烈度大于等于此值时才通知",
+        "default": 4.0
       }
     }
   },
@@ -247,7 +295,7 @@
   "push_frequency_control": {
     "description": "推送频率控制",
     "type": "object",
-    "hint": "测试性功能，不保证稳定性",
+    "hint": "测试性功能，用于控制 EEW 的推送频率，不保证稳定性",
     "items": {
       "push_every_n_reports": {
         "description": "每收到N报推送一次",
@@ -275,13 +323,18 @@
       "include_map": {
         "description": "是否包含地图链接",
         "type": "bool",
-        "hint": "仅地震信息，会在消息末尾添加地图链接",
+        "hint": "适用于地震信息，会在消息末尾添加地图链接",
         "default": true
       },
       "map_provider": {
         "description": "地图服务提供商",
         "type": "string",
-        "options": ["openstreetmap", "google", "baidu", "amap"],
+        "options": [
+          "openstreetmap",
+          "google",
+          "baidu",
+          "amap"
+        ],
         "default": "baidu",
         "hint": "推荐使用百度地图(baidu)或高德地图(amap)，在中国大陆访问更稳定"
       },
@@ -290,6 +343,12 @@
         "type": "int",
         "hint": "1-20，数值越大越详细 (部分地图服务提供商可能不支持该配置)",
         "default": 5
+      },
+      "detailed_jma_intensity": {
+        "description": "详细显示JMA区域震度",
+        "type": "bool",
+        "hint": "开启后，日本气象厅地震情报将显示所有观测到震度1及以上的区域，而不仅是最大震度区域",
+        "default": false
       }
     }
   },
@@ -364,7 +423,11 @@
         "items": {
           "type": "string"
         },
-        "default": ["heartbeat", "ping", "pong"]
+        "default": [
+          "heartbeat",
+          "ping",
+          "pong"
+        ]
       },
       "filter_p2p_areas_messages": {
         "description": "是否过滤P2P节点状态消息",
@@ -383,33 +446,6 @@
         "type": "bool",
         "hint": "连接建立、断开等",
         "default": true
-      }
-    }
-  },
-  "global_quake_config": {
-    "description": "Global Quake服务器配置",
-    "type": "object",
-    "hint": "测试性功能，不保证稳定性",
-    "items": {
-      "primary_server": {
-        "description": "主服务器地址",
-        "type": "string",
-        "default": "server-backup.globalquake.net"
-      },
-      "primary_port": {
-        "description": "主服务器端口",
-        "type": "int",
-        "default": 38000
-      },
-      "secondary_server": {
-        "description": "备用服务器地址",
-        "type": "string",
-        "default": "server-backup.globalquake.net"
-      },
-      "secondary_port": {
-        "description": "备用服务器端口",
-        "type": "int",
-        "default": 38000
       }
     }
   }

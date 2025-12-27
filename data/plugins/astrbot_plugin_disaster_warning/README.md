@@ -12,8 +12,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/AstrBot-v4.7.4%20Compatible-brightgreen.svg" alt="Compatible with AstrBot v4.7.4">
-  <img src="https://img.shields.io/badge/Release-v1.1.0-brightgreen.svg" alt="Release">
+  <img src="https://img.shields.io/badge/AstrBot-v4.9.0%20Compatible-brightgreen.svg" alt="Compatible with AstrBot v4.9.0">
+  <img src="https://img.shields.io/badge/Release-v1.2.0-brightgreen.svg" alt="Release">
   <img src="https://img.shields.io/badge/QQ群-1033089808-12B7F3.svg" alt="QQ Group">
 </p>
 
@@ -29,7 +29,7 @@
 <div align="center">
 
 | 🧭 章节 | ℹ️ 内容 |
-|---------|---------|
+| :--- | :--- |
 | [✨ 功能特性](#-功能特性) | 多数据源支持与智能推送 |
 | [🚀 安装与使用](#-安装与使用) | 安装步骤与配置示例 |
 | [📊 推送示例](#-推送示例) | 地震/海啸/气象预警推送示例 |
@@ -77,7 +77,7 @@
 > [!NOTE]
 > 虽然本插件的开发过程中大量使用了 AI 进行辅助，但我保证所有内容都经过了我的严格审查，所有的 AI 生成声明都是形式上的。你可以放心参观本仓库和使用本插件。
 >
-> 根据我对 v1.1.0 版本的简单测试，目前插件的主要功能都能正常运转。但存在部分限制（详情请看 🚧 最新版本的已知限制 部分）。
+> 根据我对 v1.2.0 版本的简单测试，目前插件的主要功能都能正常运转。但存在部分限制（详情请看 🚧 最新版本的已知限制 部分）。
 
 > [!TIP]
 > 本项目的相关开发数据 (持续更新中)：
@@ -98,9 +98,9 @@
 
 插件支持多达 16 个可自由选择启用的细粒度数据源，覆盖全球主要地震监测机构：
 
-- **中国地震网地震预警** (FAN Studio) - 实时地震预警信息。
+- **中国地震网地震预警** (FAN Studio / Wolfx) - 实时地震预警信息。
 - **台湾中央气象署强震即时警报** (FAN Studio / Wolfx) - 台湾地区地震预警。
-- **日本气象厅紧急地震速报** (P2P / Wolfx) - 日本紧急地震速报。
+- **日本气象厅紧急地震速报** (P2P / Wolfx / FAN Studio) - 日本紧急地震速报。
 - **中国地震台网地震测定** (FAN Studio / Wolfx) - 正式地震测定信息。
 - **日本气象厅地震情报** (P2P / Wolfx) - 详细地震情报。
 - **USGS地震测定** (FAN Studio) - 美国地质调查局地震信息。
@@ -129,8 +129,8 @@
 ### 📱 灵活配置
 
 - **WebUI配置** - 支持通过 AstrBot WebUI 界面进行配置。
-- **多群推送** - 支持配置特定 QQ 群接收预警（留空则不推送）。
-- **专门格式化** - 统一的消息格式，确保信息完整。
+- **多群推送** - 支持配置特定群聊接收预警（留空则不推送）。
+- **专门格式化** - 统一的消息格式，确保信息完整，可读性良好。
 
 ## 🚀 安装与使用
 
@@ -145,6 +145,10 @@
 4. **配置插件**: 进入 WebUI，找到 `astrbot_plugin_disaster_warning` 插件，选择 `插件配置` 选项，配置相关参数。
 
 ### 阈值设置示例
+
+```text
+详细显示JMA区域震度: false # 是否显示所有观测到震度的区域
+```
 
 ```text
 最小震级: 2.0        # 低于M2.0的地震不推送
@@ -164,6 +168,33 @@
 是否忽略非最终报: false   # 不忽略中间报
 ```
 
+### 📡 数据源状态
+
+| 数据源 | 提供者 | 类型 | 状态 |
+| :--- | :--- | :--- | :--- |
+| 中国地震预警网 | FAN Studio | EEW | ✅ |
+| 中国地震预警网 | Wolfx | EEW | ⚠️ |
+| 台湾中央气象署 | FAN Studio | EEW | ✅ |
+| 台湾中央气象署 | Wolfx | EEW | ⚠️ |
+| 日本气象厅紧急地震速报 | P2P | EEW | ⚠️ |
+| 日本气象厅紧急地震速报 | Wolfx | EEW | ⚠️ |
+| 日本气象厅紧急地震速报 | FAN Studio | EEW | ✅ |
+| Global Quake | Global Quake | EEW | 🧪 |
+| 中国地震台网 | FAN Studio | Info | ✅ |
+| 中国地震台网 | Wolfx | Info | ✅ |
+| 日本气象厅地震情报 | P2P | Info | ✅ |
+| 日本气象厅地震情报 | Wolfx | Info | ✅ |
+| 美国地质调查局 | FAN Studio | Info | ✅ |
+| 中国气象局 | FAN Studio | Weather | ✅ |
+| 中国海啸预警中心 | FAN Studio | Tsunami | ✅ |
+| 日本气象厅海啸预报 | P2P | Tsunami | 🧪 |
+
+✅ **正常**
+⚠️ **不稳定**
+❌ **完全不可用**
+🚧 **维护中**
+🧪 **测试中**
+
 ## 📊 推送示例
 
 ### 地震预警推送示例
@@ -173,7 +204,7 @@
 ```text
 🚨[地震预警] 中国地震预警网
 📋第 3 报(最终报)
-⏰时间：2025年12月04日 15时44分05秒 (UTC+8)
+⏰发震时间：2025年12月04日 15时44分05秒 (UTC+8)
 📍震中：新疆克孜勒苏州阿合奇县 (41.12°N, 78.54°E)
 📊震级：M 6.0
 🏔️深度：10 km
@@ -184,26 +215,39 @@
 **日本气象厅紧急地震速报示例**：
 
 ```text
-🚨[紧急地震速报] [警报] 日本气象厅
-📋第 5 报(最终报)
-⏰时间：2025年12月04日 18时04分00秒 (UTC+9)
-📍震中：十勝地方中部 (42.80°N, 143.20°E)
-📊震级：M 5.8
-🏔️深度：50 km
-💥预估最大震度：5.0
-⚠️警报区域：
-  北海道道央(已到达)、北海道道南(未到达)、北海道道东(未到达)
+🚨[紧急地震速报] [予報] 日本气象厅
+📋第 3 报(最终报)
+⏰发震时间：2025年12月20日 06时40分04秒 (UTC+9)
+📍震中：三陸沖 (39.60°N, 143.30°E)
+📊震级：M 4.4
+🏔️深度：30 km
+💥预估最大震度：2​
 🗺️地图链接: ......
+```
+
+**日本气象厅地震情报示例 (开启详细震度)**：
+
+```text
+🚨[各地震度相关情报] 日本气象厅
+⏰发震时间：2025年12月20日 02时05分00秒 (UTC+9)
+📍震中：石川県西方沖 (37.00°N, 136.70°E)
+📊震级：M 3.3
+🏔️深度：10.0 km
+💥最大震度：2.0
+🌊津波：无津波风险
+📡各地震度详情：
+  [震度2] 志賀町香能
+  [震度1] 志賀町富来領家町
 ```
 
 **USGS地震情报示例**：
 
 ```text
 🚨[地震情报] 美国地质调查局(USGS) [正式测定]
-⏰时间：2025年12月04日 11时57分06秒 (UTC+8)
-📍震中：46 km NNW of San Antonio, Puerto Rico (18.87°N, -67.28°W)
-📊震级：M 3.2
-🏔️深度：46.2 km
+⏰发震时间：2025年12月20日 14时57分09秒 (UTC+8)
+📍震中：巴勒尼群岛地区附近 (63.89°S, 172.71°E)
+📊震级：M 5.6
+🏔️深度：10.0 km​
 🗺️地图链接: ......
 ```
 
@@ -252,13 +296,14 @@
 插件提供以下命令：
 
 | 命令 | 描述 |
-|------|------|
+| :--- | :--- |
 | `/灾害预警` | 显示插件帮助信息 |
 | `/灾害预警状态` | 查看服务运行状态 |
 | `/灾害预警测试 [群号] [灾害类型] [格式]` | 测试推送功能 |
 | `/灾害预警统计` | 查看推送统计信息 |
 | `/灾害预警配置 查看` | 查看当前配置摘要 |
 | `/灾害预警去重统计` | 查看事件去重统计信息 |
+| `/灾害预警模拟 <纬度> <经度> <震级> [深度] [数据源]` | 模拟地震事件测试 |
 | `/灾害预警日志` | 查看原始消息日志统计 |
 | `/灾害预警日志开关` | 开关原始消息日志记录 |
 | `/灾害预警日志清除` | 清除所有原始消息日志 |
@@ -291,6 +336,31 @@
 
 # 查看统计信息
 /灾害预警统计
+
+# 模拟地震事件（用于测试过滤器和本地监控）
+# 格式：/灾害预警模拟 <纬度> <经度> <震级> [深度] [数据源]
+
+# 1. 基础测试 (中国地震预警网 - 默认)
+# 模拟四川 M5.2 地震
+/灾害预警模拟 30.6 103.0 5.2 10
+
+# 2. 过滤器测试 (低震级)
+# 模拟北京 M1.5 微震 (预期被过滤)
+/灾害预警模拟 39.9 116.4 1.5 10
+
+# 3. 国际数据源测试 (USGS)
+# 模拟美国加州 M6.5 地震
+/灾害预警模拟 34.05 -118.24 6.5 20 usgs_fanstudio
+
+# 4. 日本数据源测试 (JMA P2P)
+# 模拟东京 M5.8 地震 (震度自动估算，很粗略，仅供参考)
+/灾害预警模拟 35.69 139.76 5.8 50 jma_p2p
+
+# 可用数据源ID参考:
+# cea_fanstudio (中国地震预警网)
+# jma_p2p (日本气象厅P2P)
+# usgs_fanstudio (USGS)
+# cwa_fanstudio (台湾中央气象署)
 ```
 
 ---
@@ -310,17 +380,24 @@ AstrBot/
          ├─ metadata.yaml                  # 插件元数据信息
          ├─ README.md                      # 插件说明文档
          ├─ requirements.txt               # 插件依赖列表
-         ├─ models.py                      # 数据模型定义（地震、海啸、气象等）
-         ├─ disaster_service.py            # 核心灾害预警服务
-         ├─ websocket_manager.py           # WebSocket连接管理器
-         ├─ data_handlers.py               # 各数据源消息处理器
-         ├─ message_manager.py             # 消息推送管理器
-         ├─ message_formatters.py          # 专用消息格式化器
-         ├─ message_logger.py              # 原始消息记录器
-         ├─ data_source_config.py          # 数据源配置管理器
-         ├─ epsp-area.csv                  # P2P地震区域代码映射表
          ├─ logo.png                       # 插件Logo，适用于AstrBot v4.5.0+
-         └─ LICENSE                        # 许可证文件
+         ├─ LICENSE                        # 许可证文件
+         ├─ core/                          # 核心模块目录
+         │   ├─ __init__.py
+         │   ├─ disaster_service.py        # 核心灾害预警服务
+         │   ├─ websocket_manager.py       # WebSocket连接管理器
+         │   ├─ data_handlers.py           # 各数据源消息处理器
+         │   ├─ message_manager.py         # 消息推送管理器
+         │   ├─ message_formatters.py      # 专用消息格式化器
+         │   └─ message_logger.py          # 原始消息记录器
+         ├─ models/                        # 数据模型目录
+         │   ├─ __init__.py
+         │   ├─ models.py                  # 数据模型定义（地震、海啸、气象等）
+         │   └─ data_source_config.py      # 数据源配置管理器
+         ├─ utils/                         # 工具模块目录
+         │   └─ fe_regions.py              # FE地震区划中文翻译
+         └─ resources/                     # 资源文件目录
+             └─ epsp-area.csv              # P2P地震区域代码映射表
 ```
 
 插件运行时会自动创建数据存储目录：
@@ -352,33 +429,33 @@ graph TD
     classDef storage fill:#eceff1,stroke:#455a64,stroke-width:2px,color:#263238;
 
     %% 数据源层
-    subgraph DataSources [🌍 数据源层 (Data Sources)]
+    subgraph DataSources [🌍 数据源层 - Data Sources]
         direction TB
-        FS[FAN Studio<br/>(CEA/CWA/CENC/USGS/Weather/Tsunami)]:::source
-        P2P[P2P Quake<br/>(JMA EEW/Info/Tsunami)]:::source
-        Wolfx[Wolfx<br/>(JMA/CENC/CWA)]:::source
-        GQ[Global Quake<br/>(Global Seismic)]:::source
+        FS[FAN Studio<br/>CEA/CWA/CENC/USGS/Weather/Tsunami]:::source
+        P2P[P2P Quake<br/>JMA EEW/Info/Tsunami]:::source
+        Wolfx[Wolfx<br/>JMA/CENC/CWA]:::source
+        GQ[Global Quake<br/>Global Seismic]:::source
     end
 
     %% 插件核心系统
-    subgraph CoreSystem [⚙️ 插件核心系统 (Core System)]
+    subgraph CoreSystem [⚙️ 插件核心系统 - Core System]
         direction TB
         
         %% 连接与获取层
-        subgraph ConnectionLayer [🔌 连接与获取 (Connection Layer)]
+        subgraph ConnectionLayer [🔌 连接与获取 - Connection Layer]
             WSM[WebSocket Manager<br/>连接管理/自动重连/心跳保活]:::connection
             HTTP[HTTP Fetcher<br/>定时轮询获取]:::connection
             TCP[TCP Client<br/>Global Quake 专用连接]:::connection
         end
 
         %% 服务控制层
-        subgraph ServiceLayer [🎮 服务控制 (Service Layer)]
+        subgraph ServiceLayer [🎮 服务控制 - Service Layer]
             DWS[DisasterWarningService<br/>核心服务协调器]:::service
             Logger[Message Logger<br/>原始消息记录/过滤/统计]:::service
         end
 
         %% 数据处理层
-        subgraph ProcessingLayer [🧠 数据处理 (Processing Layer)]
+        subgraph ProcessingLayer [🧠 数据处理 - Processing Layer]
             Handlers[Data Handlers<br/>多源数据解析器工厂]:::logic
             
             subgraph Parsers [具体解析器]
@@ -389,16 +466,16 @@ graph TD
                 Other_H[Weather/Tsunami Handlers]:::logic
             end
             
-            Model[DisasterEvent Model<br/>统一事件模型 (Earthquake/Tsunami/Weather)]:::logic
+            Model[DisasterEvent Model<br/>统一事件模型 - Earthquake/Tsunami/Weather]:::logic
         end
 
         %% 消息管理层
-        subgraph ManagerLayer [🛡️ 消息管理 (Manager Layer)]
+        subgraph ManagerLayer [🛡️ 消息管理 - Manager Layer]
             MPM[MessagePushManager<br/>消息推送决策中心]:::logic
             
             subgraph Filters [智能过滤系统]
                 direction TB
-                Dedupe[EventDeduplicator<br/>多源事件去重 (时间/位置/震级)]:::logic
+                Dedupe[EventDeduplicator<br/>多源事件去重 - 时间/位置/震级]:::logic
                 Thres[Threshold Filters<br/>烈度/震级/震度阈值过滤]:::logic
                 Freq[ReportController<br/>EEW报数频率控制]:::logic
             end
@@ -408,13 +485,13 @@ graph TD
     end
 
     %% 存储层
-    subgraph StorageLayer [💾 存储层 (Storage)]
+    subgraph StorageLayer [💾 存储层 - Storage]
         LogFile[Raw Messages Log<br/>原始消息日志]:::storage
         Config[Plugin Config<br/>配置文件]:::storage
     end
 
     %% 输出层
-    subgraph OutputLayer [🚀 输出层 (Output)]
+    subgraph OutputLayer [🚀 输出层 - Output]
         AstrBot[AstrBot Context<br/>消息发送接口]:::output
         User[用户/群组<br/>QQ/Telegram/钉钉等]:::output
     end
@@ -509,15 +586,30 @@ graph TD
 }
 ```
 
+### FAN Studio 备用服务器配置
+
+FAN Studio 提供主备两个服务器地址，插件会自动进行故障转移：
+
+- **主服务器**: `wss://ws.fanstudio.tech/[路径]`
+- **备用服务器**: `wss://ws.fanstudio.hk/[路径]`
+
+**自动切换机制**：
+
+- 当主服务器连接失败达到最大重试次数（默认 3 次）后，自动切换到备用服务器
+- 备用服务器也失败 3 次后，停止重连
+
 ### Global Quake服务器配置
 
 ```json
 {
-  "global_quake_config": {
-    "primary_server": "server-backup.globalquake.net",
-    "primary_port": 38000,
-    "secondary_server": "server-backup.globalquake.net",
-    "secondary_port": 38000
+  "data_sources": {
+    "global_quake": {
+      "enabled": false,
+      "primary_server": "server-backup.globalquake.net",
+      "primary_port": 38000,
+      "secondary_server": "server-backup.globalquake.net",
+      "secondary_port": 38000
+    }
   }
 }
 ```
@@ -687,7 +779,7 @@ graph TD
 
 **高级过滤**：
 
-- **P2P节点状态过滤**：自动过滤包含 `areas` 数组的P2P网络节点状态消息，这些信息记录peer数量但对分析无意义。
+- **P2P节点状态过滤**：自动过滤包含 `areas` 数组的 P2P 网络节点状态消息，这些信息记录 peer 数量但对分析无意义。
 - **重复事件过滤**：基于时间、位置、震级智能识别并过滤重复的地震事件，避免相同事件被多次记录。
 - **连接状态过滤**：过滤 WebSocket 连接建立、断开等状态消息，专注于实际数据。
 
@@ -724,7 +816,7 @@ A: 已知部分地图服务商的缩放级别参数可能不生效，这是当�
 - 地图链接仍然可以正常显示震中位置。
 - 用户可以在打开的地图页面中手动缩放查看详情。
 - 核心震中位置标注功能完全正常。
-- 如果你有更好的想法，或者知道如何解决该问题，欢迎提交PR！
+- 如果你有更好的想法，或者知道如何解决该问题，欢迎提交 PR！
 
 **Q: 没有收到预警推送？**
 A: 检查以下几点：
@@ -733,6 +825,7 @@ A: 检查以下几点：
 - 检查阈值设置是否过高。
 - 确认数据源已启用。
 - 使用`/灾害预警测试`命令测试推送功能。
+- 可能是数据源本身的问题。
 
 **Q: 推送过于频繁怎么办？**
 A: 调整推送频率控制：
@@ -750,8 +843,10 @@ A: 调整推送频率控制：
 2. 查看 AstrBot 日志文件
 3. 使用`/灾害预警状态`命令查看服务状态
 
-> [!CAUTION]
+> [!TIP]
 > 由于 AstrBot 的 Bug[#3903](https://github.com/AstrBotDevs/AstrBot/issues/3903)，AstrBot WebUI 控制台输出的日志在本插件的使用场景下**很可能**出现显示问题，丢失部分日志。如果要在控制台中查看完整的插件日志记录，请重新刷新 WebUI 控制台或直接查看 CMD 窗口。
+>
+> 该 Bug 已于 AstrBot v4.9.0 中修复，推荐使用大于等于该版本的 AstrBot 运行本插件。
 
 ---
 
@@ -763,9 +858,7 @@ A: 调整推送频率控制：
 
 **Global Quake 服务状态**：
 
-- Global Quake 服务基本处于不可用状态。
-- 虽然插件能提示服务器成功连接，但是从未推送过任何事件，也没有记录到任何数据。
-- 原因暂时未知，目前代码中只有一个"空壳实现"。
+- 目前正在适配 Global Quake 服务......
 
 ## 📈 性能优化
 
@@ -779,7 +872,7 @@ A: 调整推送频率控制：
 
 - 支持多数据源同时连接。
 - 具备断线重连机制。
-- 合理的重连间隔避免频繁连接。
+- **支持 FAN Studio 主备服务器自动切换**：当主服务器不可用时，自动故障转移到备用服务器。
 
 ## 🤝 贡献与支持
 
@@ -836,7 +929,7 @@ GNU Affero General Public License v3.0 - 详见 [LICENSE](LICENSE) 文件。
 
 其他优秀的开源 EEW 项目：
 
-- [要石 kanameishi](https://github.com/Lipomoea/kanameishi) - 基于多重 API 制作的地震预警和地震信息可视化 Web 应用.
+- [要石 kanameishi](https://github.com/Lipomoea/kanameishi) - 基于多重 API 制作的地震预警和地震信息可视化 Web 应用。
 - [EQuake](https://github.com/SeriesNotFound/EQuake) - 一款基于易语言（底层: C / C++）开发的轻量级中国、日本实时地震观测软件。
 
 ## 📊 仓库状态

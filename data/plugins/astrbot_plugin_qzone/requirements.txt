@@ -1,2 +1,0 @@
-pillowmd
-json5

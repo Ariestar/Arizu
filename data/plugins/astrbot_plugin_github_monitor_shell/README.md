@@ -26,6 +26,8 @@
 除了原有的配置项，现在还支持：
 
 - `group_notification_targets`: 群通知目标（群号列表），可以将通知发送到指定的群聊中
+- `time_zone`: 时间显示时区（默认 `Asia/Shanghai`，即可显示为北京时间）
+- `time_format`: 时间显示格式，使用 Python `strftime` 语法，默认 `%Y-%m-%d %H:%M:%S`
 
 ## 仓库配置增强功能
 
@@ -67,3 +69,10 @@
 
 表示监控 1592363624/astrbot_plugin_github_monitor_shell 仓库，当第二个仓库有更新时，除了全局配置的群通知目标外，还会通知
 123456789 和 91219736 群组。
+
+
+## 🐔 联系作者
+
+- **反馈**：欢迎在 [GitHub Issues](https://github.com/1592363624/astrbot_plugin_zanwo_shell/issues) 提交问题或建议
+QQ群:91219736
+telegram:[巅峰阁](https://t.me/ShellDFG)

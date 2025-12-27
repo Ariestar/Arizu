@@ -1,16 +1,37 @@
 import json
 import os
-from typing import List, Dict
+from datetime import datetime
+from typing import List, Dict, Optional
+from zoneinfo import ZoneInfo
 
 from astrbot.api import logger
+from astrbot.api.platform import MessageType
+from astrbot.core.message.message_event_result import MessageChain
+from astrbot.core.platform.astr_message_event import MessageSesion
 from astrbot.core.star import StarTools
 
 
+def format_commit_datetime(
+    date_str: str,
+    time_zone: str,
+    time_format: str,
+) -> Optional[str]:
+    try:
+        normalized = date_str.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(normalized)
+        target_tz = ZoneInfo(time_zone)
+        return dt.astimezone(target_tz).strftime(time_format)
+    except Exception:
+        return None
+
+
 class NotificationService:
-    def __init__(self, context):
+    def __init__(self, context, config: Dict | None = None):
         self.context = context
         plugin_data_dir = StarTools.get_data_dir("GitHub监控插件")
         self.failed_notifications_file = os.path.join(plugin_data_dir, "failed_notifications.json")
+        self.time_zone = (config or {}).get("time_zone", "Asia/Shanghai")
+        self.time_format = (config or {}).get("time_format", "%Y-%m-%d %H:%M:%S")
         self._ensure_data_dir()
 
     def _ensure_data_dir(self):
@@ -23,7 +44,11 @@ class NotificationService:
         try:
             if os.path.exists(self.failed_notifications_file):
                 with open(self.failed_notifications_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
+                    data = json.load(f) or []
+                    if not isinstance(data, list):
+                        return []
+                    data = self._normalize_failed_notifications(data)
+                    data = self._dedupe_failed_notifications(data)
                     # 清理过期的通知数据（比如仓库已删除的通知）
                     valid_notifications = [n for n in data if self._is_notification_valid(n)]
                     if len(valid_notifications) != len(data):
@@ -34,6 +59,89 @@ class NotificationService:
             logger.error(f"加载失败通知记录失败: {str(e)}")
             return []
 
+    def _normalize_failed_notifications(self, notifications: List[Dict]) -> List[Dict]:
+        normalized: List[Dict] = []
+        for n in notifications:
+            if not isinstance(n, dict):
+                continue
+            repo_info = n.get("repo_info")
+            new_commits = n.get("new_commits")
+            if not isinstance(repo_info, dict) or not isinstance(new_commits, list) or not new_commits:
+                continue
+
+            targets = n.get("targets", [])
+            group_targets = n.get("group_targets", [])
+            if targets is None:
+                targets = []
+            if group_targets is None:
+                group_targets = []
+
+            item = {
+                "repo_info": repo_info,
+                "new_commits": new_commits,
+                "targets": self._normalize_target_list(targets),
+                "group_targets": self._normalize_target_list(group_targets),
+            }
+            item["key"] = n.get("key") or self._build_notification_key(repo_info, new_commits)
+            item["attempts"] = int(n.get("attempts", 0) or 0)
+            item["created_at"] = n.get("created_at") or datetime.utcnow().isoformat()
+            normalized.append(item)
+        return normalized
+
+    def _dedupe_failed_notifications(self, notifications: List[Dict]) -> List[Dict]:
+        merged: Dict[str, Dict] = {}
+        for n in notifications:
+            key = n.get("key")
+            if not key:
+                continue
+            if key not in merged:
+                merged[key] = n
+                continue
+
+            existing = merged[key]
+            existing["targets"] = self._merge_unique(existing.get("targets", []), n.get("targets", []))
+            existing["group_targets"] = self._merge_unique(
+                existing.get("group_targets", []),
+                n.get("group_targets", []),
+            )
+            existing["attempts"] = max(int(existing.get("attempts", 0) or 0), int(n.get("attempts", 0) or 0))
+            existing_created_at = existing.get("created_at")
+            n_created_at = n.get("created_at")
+            if isinstance(existing_created_at, str) and isinstance(n_created_at, str):
+                existing["created_at"] = min(existing_created_at, n_created_at)
+        return list(merged.values())
+
+    def _merge_unique(self, a: List[str], b: List[str]) -> List[str]:
+        merged = []
+        seen = set()
+        for item in (a or []) + (b or []):
+            if item in seen:
+                continue
+            seen.add(item)
+            merged.append(item)
+        return merged
+
+    def _normalize_target_list(self, items) -> List[str]:
+        if not isinstance(items, list):
+            return []
+        cleaned: List[str] = []
+        for x in items:
+            if x is None:
+                continue
+            s = str(x).strip()
+            if not s:
+                continue
+            cleaned.append(s)
+        return cleaned
+
+    def _build_notification_key(self, repo_info: Dict, new_commits: List[Dict]) -> str:
+        owner = (repo_info.get("owner") or {}).get("login") or "unknown"
+        repo = repo_info.get("name") or "unknown"
+        sha = ""
+        if new_commits and isinstance(new_commits[0], dict):
+            sha = new_commits[0].get("sha") or ""
+        return f"{owner}/{repo}@{sha}"
+
     def _is_notification_valid(self, notification: Dict) -> bool:
         """检查通知是否仍然有效（仓库是否仍然在配置中）"""
         try:
@@ -43,11 +151,11 @@ class NotificationService:
                 if star.name == "GitHub监控插件":
                     github_plugin = star.star_cls
                     break
-            
+
             if github_plugin and github_plugin.config:
-                repositories = self.config.get("repositories", "")
+                repositories = github_plugin.config.get("repositories", "")
                 repo_info = notification.get("repo_info", {})
-                
+
                 # 检查仓库是否仍在配置中
                 for repo_config in repositories:
                     if isinstance(repo_config, str):
@@ -56,13 +164,13 @@ class NotificationService:
                         repo_path = parts[0]
                         if "/" in repo_path:
                             owner, repo = repo_path.split("/", 1)
-                            if (owner == repo_info.get('owner', {}).get('login') and 
-                                repo == repo_info.get('name')):
+                            if (owner == repo_info.get('owner', {}).get('login') and
+                                    repo == repo_info.get('name')):
                                 return True
                     elif isinstance(repo_config, dict):
                         # 字典格式: {"owner": "...", "repo": "...", "groups": [...], ...}
-                        if (repo_config.get("owner") == repo_info.get('owner', {}).get('login') and 
-                            repo_config.get("repo") == repo_info.get('name')):
+                        if (repo_config.get("owner") == repo_info.get('owner', {}).get('login') and
+                                repo_config.get("repo") == repo_info.get('name')):
                             return True
             # 如果无法确定，保留通知（宁可多发也不漏发）
             return True
@@ -75,7 +183,9 @@ class NotificationService:
         """保存发送失败的通知"""
         try:
             with open(self.failed_notifications_file, 'w', encoding='utf-8') as f:
-                json.dump(notifications, f, ensure_ascii=False, indent=2)
+                normalized = self._normalize_failed_notifications(notifications)
+                normalized = self._dedupe_failed_notifications(normalized)
+                json.dump(normalized, f, ensure_ascii=False, indent=2)
         except Exception as e:
             logger.error(f"保存失败通知记录失败: {str(e)}")
 
@@ -89,14 +199,20 @@ class NotificationService:
         remaining_notifications = []
 
         for notification in failed_notifications:
-            success = await self._send_notification(
+            targets = notification.get("targets", [])
+            group_targets = notification.get("group_targets", [])
+
+            failed_targets, failed_group_targets = await self._send_notification_collect_failures(
                 notification["repo_info"],
                 notification["new_commits"],
-                notification["targets"],
-                notification["group_targets"]
+                targets,
+                group_targets,
             )
 
-            if not success:
+            if failed_targets or failed_group_targets:
+                notification["targets"] = failed_targets
+                notification["group_targets"] = failed_group_targets
+                notification["attempts"] = int(notification.get("attempts", 0) or 0) + 1
                 remaining_notifications.append(notification)
 
         # 保存仍然失败的通知
@@ -110,64 +226,83 @@ class NotificationService:
         if not new_commits:
             logger.info("没有新的提交需要通知")
             return
-            
-        try:
-            success = await self._send_notification(repo_info, new_commits, targets, group_targets)
 
-            # 如果发送失败，保存到失败列表中
-            if not success:
+        try:
+            failed_targets, failed_group_targets = await self._send_notification_collect_failures(
+                repo_info,
+                new_commits,
+                targets,
+                group_targets,
+            )
+
+            if failed_targets or failed_group_targets:
                 failed_notifications = self._load_failed_notifications()
-                failed_notifications.append({
-                    "repo_info": repo_info,
-                    "new_commits": new_commits,
-                    "targets": targets,
-                    "group_targets": group_targets
-                })
+                failed_notifications.append(
+                    {
+                        "repo_info": repo_info,
+                        "new_commits": new_commits,
+                        "targets": failed_targets,
+                        "group_targets": failed_group_targets,
+                        "key": self._build_notification_key(repo_info, new_commits),
+                        "attempts": 1,
+                        "created_at": datetime.utcnow().isoformat(),
+                    }
+                )
                 self._save_failed_notifications(failed_notifications)
-                logger.warning("通知发送失败，已保存到待重试列表")
+                logger.warning("部分通知发送失败，已保存到待重试列表")
         except Exception as e:
             logger.error(f"发送通知失败: {str(e)}")
             # 保存到失败列表中
             try:
                 failed_notifications = self._load_failed_notifications()
-                failed_notifications.append({
-                    "repo_info": repo_info,
-                    "new_commits": new_commits,
-                    "targets": targets,
-                    "group_targets": group_targets
-                })
+                failed_notifications.append(
+                    {
+                        "repo_info": repo_info,
+                        "new_commits": new_commits,
+                        "targets": self._normalize_target_list(targets),
+                        "group_targets": self._normalize_target_list(group_targets),
+                        "key": self._build_notification_key(repo_info, new_commits),
+                        "attempts": 1,
+                        "created_at": datetime.utcnow().isoformat(),
+                    }
+                )
                 self._save_failed_notifications(failed_notifications)
                 logger.warning("通知发送异常，已保存到待重试列表")
             except Exception as save_error:
                 logger.error(f"保存失败通知记录也失败了: {str(save_error)}")
 
-    async def _send_notification(self, repo_info: Dict, new_commits: List[Dict], targets: List[str],
-                                 group_targets: List[str] = None) -> bool:
-        """实际发送通知"""
+    async def _send_notification_collect_failures(
+        self,
+        repo_info: Dict,
+        new_commits: List[Dict],
+        targets,
+        group_targets=None,
+    ) -> tuple[List[str], List[str]]:
         try:
             message = self._format_commit_message(repo_info, new_commits)
+            failed_targets: List[str] = []
+            failed_group_targets: List[str] = []
 
-            success = True
-            
-            # 发送私聊消息
-            for target in targets:
-                if target:  # 确保目标不为空
+            for target in self._merge_unique(self._normalize_target_list(targets), []):
+                try:
                     result = await self._send_private_message(int(target), message)
                     if not result.get("success", False):
-                        success = False
+                        failed_targets.append(target)
+                except Exception:
+                    failed_targets.append(target)
 
-            # 发送群消息
-            if group_targets:
-                for group_target in group_targets:
-                    if group_target:  # 确保目标不为空
-                        result = await self._send_group_message(int(group_target), message)
-                        if not result.get("success", False):
-                            success = False
+            for group_target in self._merge_unique(self._normalize_target_list(group_targets), []):
+                try:
+                    result = await self._send_group_message(int(group_target), message)
+                    if not result.get("success", False):
+                        failed_group_targets.append(group_target)
+                except Exception:
+                    failed_group_targets.append(group_target)
 
-            return success
+            return failed_targets, failed_group_targets
         except Exception as e:
             logger.error(f"发送通知时发生异常: {str(e)}")
-            return False
+            return self._normalize_target_list(targets), self._normalize_target_list(group_targets)
 
     def _format_commit_message(self, repo_info: Dict, new_commits: List[Dict]) -> str:
         """格式化commit消息"""
@@ -180,77 +315,101 @@ class NotificationService:
         if len(new_commits) == 1:
             # 只有一个提交的向后兼容格式
             commit = new_commits[0]
+            formatted_date = format_commit_datetime(
+                commit["date"],
+                self.time_zone,
+                self.time_format,
+            )
             message += f"✨ 新Commit:\n"
             message += f"📝 SHA: {commit['sha'][:7]}\n"
             message += f"👤 作者: {commit['author']}\n"
-            message += f"📅 时间: {commit['date']}\n"
+            if formatted_date:
+                message += f"📅 时间: {formatted_date}\n"
+            else:
+                message += f"📅 时间: {commit['date']}\n"
             message += f"💬 信息: {commit['message']}\n"
             message += f"🔗 链接: {commit['url']}\n\n"
         else:
             # 有多个提交的格式
             message += f"✨ 本次更新包含 {len(new_commits)} 个新提交:\n\n"
             for i, commit in enumerate(new_commits, 1):
-                message += f"{i}. 提交 SHA: {commit['sha'][:7]}\n"
-                message += f"   作者: {commit['author']}\n"
-                message += f"   时间: {commit['date']}\n"
-                message += f"   信息: {commit['message']}\n"
-                message += f"   链接: {commit['url']}\n\n"
+                formatted_date = format_commit_datetime(
+                    commit["date"],
+                    self.time_zone,
+                    self.time_format,
+                )
+                message += f"{i}. ✨ 新Commit:\n"
+                message += f"   📝 SHA: {commit['sha'][:7]}\n"
+                message += f"   👤 作者: {commit['author']}\n"
+                if formatted_date:
+                    message += f"   📅 时间: {formatted_date}\n"
+                else:
+                    message += f"   📅 时间: {commit['date']}\n"
+                message += f"   💬 信息: {commit['message']}\n"
+                message += f"   🔗 链接: {commit['url']}\n\n"
 
         return message
 
     async def _send_private_message(self, user_id: int, message: str):
-        """通过捕获的 NapCat bot 实例主动发送私聊消息"""
+        """通过 AstrBot 通用接口主动发送私聊消息"""
         try:
-            # 获取插件实例来访问 bot_instance
-            github_plugin = None
-            # 通过 context 获取所有插件，然后找到我们的插件
-            for star in self.context.get_all_stars():
-                if star.name == "GitHub监控插件":
-                    github_plugin = star.star_cls
-                    break
-
-            if not github_plugin or not github_plugin.bot_instance:
-                logger.warning("❌ bot 实例未捕获，无法发送私聊消息。")
-                return {"success": False, "message": "未捕获 bot 实例"}
-
-            # 直接调用 NapCat API（底层同 /send_private_msg）
-            result = await github_plugin.bot_instance.api.call_action(
-                "send_private_msg",
-                user_id=user_id,
-                message=message
+            user_id_str = str(user_id)
+            if not user_id_str.isdigit():
+                error_msg = f"发送私聊消息失败: 非法的QQ号:{user_id_str}"
+                logger.error(error_msg)
+                return {"success": False, "message": error_msg}
+            message_chain = MessageChain().message(message)
+            await StarTools.send_message_by_id(
+                type="PrivateMessage",
+                id=user_id_str,
+                message_chain=message_chain,
             )
             logger.info(f"✅ 成功向 {user_id} 发送私聊消息")
-            return {"success": True, "result": result}
-
+            return {"success": True}
         except Exception as e:
             error_msg = f"发送私聊消息失败: {str(e)}"
             logger.error(error_msg, exc_info=True)
             return {"success": False, "message": error_msg}
 
     async def _send_group_message(self, group_id: int, message: str):
-        """通过捕获的 NapCat bot 实例主动发送群消息"""
+        """通过 AstrBot 通用接口主动发送群消息"""
         try:
-            # 获取插件实例来访问 bot_instance
-            github_plugin = None
-            # 通过 context 获取所有插件，然后找到我们的插件
-            for star in self.context.get_all_stars():
-                if star.name == "GitHub监控插件":
-                    github_plugin = star.star_cls
-                    break
+            group_id_str = str(group_id)
+            message_chain = MessageChain().message(message)
 
-            if not github_plugin or not github_plugin.bot_instance:
-                logger.warning("❌ bot 实例未捕获，无法发送群消息。")
-                return {"success": False, "message": "未捕获 bot 实例"}
+            if group_id_str.isdigit():
+                await StarTools.send_message_by_id(
+                    type="GroupMessage",
+                    id=group_id_str,
+                    message_chain=message_chain,
+                )
+                logger.info(f"✅ 成功向 QQ 群 {group_id_str} 发送消息")
+                return {"success": True}
 
-            # 直接调用 NapCat API（底层同 /send_group_msg）
-            result = await github_plugin.bot_instance.api.call_action(
-                "send_group_msg",
-                group_id=group_id,
-                message=message
-            )
-            logger.info(f"✅ 成功向群 {group_id} 发送消息")
-            return {"success": True, "result": result}
+            if group_id_str.startswith("-"):
+                platform_id = None
+                for platform in self.context.platform_manager.platform_insts:
+                    meta = platform.meta()
+                    if meta.name == "telegram":
+                        platform_id = meta.id
+                        break
+                if not platform_id:
+                    error_msg = "发送群消息失败: 未找到Telegram适配器"
+                    logger.error(error_msg)
+                    return {"success": False, "message": error_msg}
 
+                session = MessageSesion(
+                    platform_name=platform_id,
+                    message_type=MessageType.GROUP_MESSAGE,
+                    session_id=group_id_str,
+                )
+                await StarTools.send_message(session, message_chain)
+                logger.info(f"✅ 成功向 Telegram 群 {group_id_str} 发送消息")
+                return {"success": True}
+
+            error_msg = f"发送群消息失败: 非法的群标识:{group_id_str}"
+            logger.error(error_msg)
+            return {"success": False, "message": error_msg}
         except Exception as e:
             error_msg = f"发送群消息失败: {str(e)}"
             logger.error(error_msg, exc_info=True)
