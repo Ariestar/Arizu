@@ -21,6 +21,8 @@ services:
   astrbot:
     environment:
       - TZ=Asia/Shanghai
+      - PLAYWRIGHT_BROWSERS_PATH=/AstrBot/data/playwright
+      - PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright/
     image: soulter/astrbot:latest
     container_name: astrbot
     restart: always
