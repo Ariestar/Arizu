@@ -114,10 +114,7 @@ data/cmd_config.json
 
 # --- Sensitive Plugin Configs ---
 # Ignore password files in any plugin config directory
-data/plugins/*/config/password.json
-data/plugins/*/config/secrets.json
-data/plugins/*/config/*.key
-data/plugins/*/config/*.pem
+data/
 
 # --- Model Checkpoints ---
 *.pkl
@@ -128,3 +125,9 @@ models/large_files/
 
 # --- Documentation ---
 LEARNING_LOG.md
+docs/
+
+# --- other project files ---
+VCPToolBox/
+WechatPadPro/
+bot/

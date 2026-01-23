@@ -36,6 +36,16 @@ services:
       - ./data:/AstrBot/data
     networks:
       - astrbot_network
+      # - wechat_net
+
+  # WeChatPadPro (WPP) 服务
+  # 这是一个将微信协议转换为 HTTP API 的中间件，配合 AstrBot 使用
+  # 由于该项目较大，建议使用独立的 docker-compose 管理 (d:\Coding\Bot\ARIZU\WeChatPadPro\deploy\docker-compose.yml)
+  # 这里保留 AstrBot 本体即可
+
 networks:
   astrbot_network:
     driver: bridge
+  # wechat_net:
+  #   external: true
+  #   name: wechatpadpro-network
